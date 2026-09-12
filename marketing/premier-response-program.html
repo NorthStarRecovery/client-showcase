@@ -28,11 +28,14 @@
     .cover .eyebrow { position: absolute; top: 147px; left: 56px; color: #8FB8FF; }
     .cover h1 { position: absolute; left: 56px; top: 181px; width: 704px; font-size: 61px; line-height: 1.02; font-variation-settings: 'wdth' 118; }
     .contract-line { position: absolute; left: 56px; top: 329px; width: 680px; font-size: 20px; color: #B9D3F5; }
-    .system-image { position: absolute; left: 40px; top: 375px; width: 736px; height: 390px; }
-    .system-image img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 53%; }
-    .image-note { position: absolute; right: 56px; top: 778px; font: 9px/1.4 Plex, monospace; color: #B9D3F5; }
-    .cover-summary { position: absolute; left: 56px; top: 810px; width: 704px; border-top: 1px solid #54626F; padding-top: 22px; }
-    .cover-summary h2 { max-width: 640px; font-size: 27px; line-height: 1.17; }
+    .system-image { position: absolute; left: 56px; top: 370px; width: 704px; height: 406px; }
+    .system-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .stage-rail { position: absolute; left: 56px; top: 778px; width: 704px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; gap: 8px; border-top: 1px solid #54626F; padding-top: 16px; }
+    .stage-rail::after { content: ''; position: absolute; right: 0; top: -1px; width: 24px; height: 2px; background: #D2691E; }
+    .stage-rail span { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 1.2; color: #B9D3F5; }
+    .stage-rail .ns-icon { display: inline-block; flex: none; width: 24px; height: 24px; color: #6EABFF; }
+    .cover-summary { position: absolute; left: 56px; top: 849px; width: 704px; border-top: 1px solid #54626F; padding-top: 21px; }
+    .cover-summary h2 { max-width: 704px; font-size: 26px; line-height: 1.17; }
     .cover-summary p { max-width: 645px; margin-top: 15px; font-size: 18px; line-height: 1.43; color: #B9D3F5; }
     .folio { position: absolute; left: 56px; right: 56px; bottom: 35px; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid #C6D1DE; padding-top: 13px; color: #54626F; font: 9px/1.4 Plex, monospace; letter-spacing: .055em; text-transform: uppercase; }
     .folio a { text-decoration: none; }
@@ -43,12 +46,15 @@
     .column-label { border-top: 3px solid #104C8E; padding-top: 11px; margin-bottom: 23px; color: #104C8E; }
     .steps { padding: 0; list-style: none; }
     .step { display: grid; grid-template-columns: 34px 1fr; column-gap: 11px; margin-bottom: 20px; }
+    .step-marker { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .step-marker .ns-icon { width: 24px; height: 24px; color: #104C8E; }
     .step-number { font: 13px/1.6 Plex, monospace; color: #B85510; }
     .step h2 { font-size: 21px; line-height: 1.1; margin-bottom: 8px; }
     .step p { font-size: 16px; line-height: 1.37; }
     .benefit { padding-bottom: 20px; margin-bottom: 19px; border-bottom: 1px solid #C6D1DE; }
     .benefit:last-child { border-bottom: none; margin-bottom: 0; }
-    .benefit h2 { font-size: 21px; line-height: 1.1; margin-bottom: 10px; }
+    .benefit h2 { display: flex; align-items: center; gap: 10px; font-size: 21px; line-height: 1.1; margin-bottom: 10px; }
+    .benefit h2 .ns-icon { flex: none; width: 24px; height: 24px; color: #104C8E; }
     .benefit p { font-size: 16px; line-height: 1.45; }
     .review-loop { display: flex; align-items: flex-start; gap: 10px; margin: 3px 0 0 45px; border-top: 2px solid #B85510; padding-top: 12px; }
     .review-loop p { font-size: 16px; line-height: 1.4; }
@@ -68,9 +74,9 @@
       <p class="eyebrow">Premier Response</p>
       <h1>A progression<br>to readiness.</h1>
       <p class="contract-line">One contract. The power of all of NorthStar.</p>
-      <figure class="system-image"><img src="../assets/marketing/premier-response-program.jpg" alt="Conceptual property model with separated planning layers illustrating an integrated readiness program."></figure>
-      <p class="image-note">Conceptual architectural imagery.</p>
-      <section class="cover-summary"><h2>Prepare the relationship<br>before you need the response.</h2><p>Align the agreement, procedures and property priorities so the response reflects your organization.</p></section>
+      <figure class="system-image"><img src="../assets/marketing/premier-response-program.jpg" alt="Architectural illustration of one property with aligned building and planning layers."></figure>
+      <div class="stage-rail" aria-label="Agreement, procedures, planning, response and review"><span><i class="ns-icon ns-file-text" aria-hidden="true"></i>Agreement</span><span><i class="ns-icon ns-clipboard-check" aria-hidden="true"></i>Procedures</span><span><i class="ns-icon ns-layers-3" aria-hidden="true"></i>Planning</span><span><i class="ns-icon ns-shield-check" aria-hidden="true"></i>Response</span><span><i class="ns-icon ns-refresh-cw" aria-hidden="true"></i>Review</span></div>
+      <section class="cover-summary"><h2>Prepare before you need the response.</h2><p>Align the agreement, procedures and property priorities so the response reflects your organization.</p></section>
       <footer class="folio"><a href="https://recovery.northstar.com/">recovery.northstar.com</a><span>Premier Response Program / 01</span></footer>
     </section>
     <section class="page detail" aria-label="Premier Response stages and program advantages">
@@ -81,19 +87,19 @@
         <section>
           <p class="eyebrow column-label">The response process</p>
           <ol class="steps">
-            <li class="step"><span class="step-number">01</span><div><h2>Master service agreement</h2><p>A work-order model with pre-established pricing.</p></div></li>
-            <li class="step"><span class="step-number">02</span><div><h2>SOP development</h2><p>Integrate NorthStar into your standard operating procedures.</p></div></li>
-            <li class="step"><span class="step-number">03</span><div><h2>Pre-loss planning</h2><p>Building assessments, asset monitoring and critical building reviews.</p></div></li>
-            <li class="step"><span class="step-number">04</span><div><h2>Response</h2><p>A response tailored to the individual needs of your organization.</p></div></li>
-            <li class="step"><span class="step-number">05</span><div><h2>After-action review</h2><p>Review the response and capture lessons learned.</p></div></li>
+            <li class="step"><span class="step-marker"><i class="ns-icon ns-file-text" aria-hidden="true"></i><span class="step-number">01</span></span><div><h2>Master service agreement</h2><p>A work-order model with pre-established pricing.</p></div></li>
+            <li class="step"><span class="step-marker"><i class="ns-icon ns-clipboard-check" aria-hidden="true"></i><span class="step-number">02</span></span><div><h2>SOP development</h2><p>Integrate NorthStar into your standard operating procedures.</p></div></li>
+            <li class="step"><span class="step-marker"><i class="ns-icon ns-layers-3" aria-hidden="true"></i><span class="step-number">03</span></span><div><h2>Pre-loss planning</h2><p>Building assessments, asset monitoring and critical building reviews.</p></div></li>
+            <li class="step"><span class="step-marker"><i class="ns-icon ns-shield-check" aria-hidden="true"></i><span class="step-number">04</span></span><div><h2>Response</h2><p>A response tailored to the individual needs of your organization.</p></div></li>
+            <li class="step"><span class="step-marker"><i class="ns-icon ns-refresh-cw" aria-hidden="true"></i><span class="step-number">05</span></span><div><h2>After-action review</h2><p>Review the response and capture lessons learned.</p></div></li>
           </ol>
           <div class="review-loop"><p>Feed lessons learned back into pre-loss planning.</p></div>
         </section>
         <section>
           <p class="eyebrow column-label">Program advantages</p>
-          <div class="benefit"><h2>Terms</h2><p>No-cost priority response under the MSA, no retainer and pre-negotiated pricing.</p></div>
-          <div class="benefit"><h2>Preparedness</h2><p>Training, weather updates and a pre-loss assessment program.</p></div>
-          <div class="benefit"><h2>Support and tools</h2><p>Dedicated Account and Operations Managers. Spatial and exposure mapping. Internal UAV and 3D camera services.</p></div>
+          <div class="benefit"><h2><span class="ns-icon ns-file-text" aria-hidden="true"></span><span>Terms</span></h2><p>No-cost priority response under the MSA, no retainer and pre-negotiated pricing.</p></div>
+          <div class="benefit"><h2><span class="ns-icon ns-shield-check" aria-hidden="true"></span><span>Preparedness</span></h2><p>Training, weather updates and a pre-loss assessment program.</p></div>
+          <div class="benefit"><h2><span class="ns-icon ns-scan-line" aria-hidden="true"></span><span>Support and tools</span></h2><p>Dedicated Account and Operations Managers. Spatial and exposure mapping. Internal UAV and 3D camera services.</p></div>
         </section>
       </div>
       <p class="terms-note">Priority-response program terms are established in the MSA. Recovery work is separately scoped and priced.</p>

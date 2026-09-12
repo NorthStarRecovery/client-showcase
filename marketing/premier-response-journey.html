@@ -21,12 +21,14 @@
     .document-label { position: absolute; top: 35px; right: 48px; text-align: right; font: 11px/1.65 Plex, monospace; letter-spacing: .1em; color: #54626F; text-transform: uppercase; }
     h1 { position: absolute; left: 48px; top: 124px; width: 397px; font-size: 48px; line-height: 1.08; }
     .intro { position: absolute; left: 48px; top: 303px; width: 354px; font-size: 18px; line-height: 1.4; }
-    .architecture { position: absolute; left: 468px; top: 88px; width: 764px; height: 324px; }
-    .architecture img { width: 100%; height: 100%; display: block; object-fit: contain; }
+    .architecture { position: absolute; left: 468px; top: 123px; width: 764px; height: 248px; }
+    .architecture img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center top; }
     .steps { position: absolute; top: 423px; left: 48px; width: 1184px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; padding: 0; list-style: none; }
     .step { border-top: 2px solid #104C8E; padding-top: 11px; }
     .step-number { font: 12px/1.4 Plex, monospace; color: #B85510; letter-spacing: .06em; }
-    .step h2 { font-size: 21px; line-height: 1.13; min-height: 48px; margin-top: 8px; margin-bottom: 11px; }
+    .stage-heading { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; margin: 8px 0 11px; }
+    .stage-heading .ns-icon { color: #104C8E; width: 24px; height: 24px; margin-top: 1px; }
+    .step h2 { font-size: 20px; line-height: 1.13; min-height: 48px; margin: 0; }
     .step p { font-size: 16px; line-height: 1.35; }
     .loop { position: absolute; left: 540px; top: 600px; width: 674px; height: 25px; }
     .loop svg { display: block; width: 100%; height: 100%; }
@@ -54,18 +56,18 @@
       <div class="document-label">Premier Response<br>40+ years of experience</div>
       <h1>Readiness is<br>a continuous<br>process.</h1>
       <p class="intro">One contract. The power of all of NorthStar.</p>
-      <figure class="architecture"><img src="../assets/marketing/premier-response-journey.jpg" alt="Conceptual architectural models showing five connected stages of property readiness."></figure>
+      <figure class="architecture"><img src="../assets/marketing/premier-response-journey.jpg" alt="Architectural illustration of the same property through five connected stages of readiness."></figure>
       <ol class="steps">
-        <li class="step"><span class="step-number">01 / AGREEMENT</span><h2>Master service<br>agreement</h2><p>Work-order model and pre-established pricing.</p></li>
-        <li class="step"><span class="step-number">02 / PROCEDURES</span><h2>SOP<br>development</h2><p>NorthStar integrated into your standard operating procedures.</p></li>
-        <li class="step"><span class="step-number">03 / PLANNING</span><h2>Pre-loss<br>planning</h2><p>Building assessments, asset monitoring and critical building reviews.</p></li>
-        <li class="step"><span class="step-number">04 / RESPONSE</span><h2>Tailored<br>response</h2><p>A response shaped around your organization’s individual needs.</p></li>
-        <li class="step"><span class="step-number">05 / REVIEW</span><h2>After-action<br>review</h2><p>Review the response.<br>Capture lessons learned.</p></li>
+        <li class="step"><span class="step-number">01 / AGREEMENT</span><div class="stage-heading"><span class="ns-icon ns-file-text" aria-hidden="true"></span><h2>Master service<br>agreement</h2></div><p>Work-order model and pre-established pricing.</p></li>
+        <li class="step"><span class="step-number">02 / PROCEDURES</span><div class="stage-heading"><span class="ns-icon ns-clipboard-check" aria-hidden="true"></span><h2>SOP<br>development</h2></div><p>NorthStar integrated into your standard operating procedures.</p></li>
+        <li class="step"><span class="step-number">03 / PLANNING</span><div class="stage-heading"><span class="ns-icon ns-layers-3" aria-hidden="true"></span><h2>Pre-loss<br>planning</h2></div><p>Building assessments, asset monitoring and critical building reviews.</p></li>
+        <li class="step"><span class="step-number">04 / RESPONSE</span><div class="stage-heading"><span class="ns-icon ns-shield-check" aria-hidden="true"></span><h2>Tailored<br>response</h2></div><p>A response shaped around your organization’s individual needs.</p></li>
+        <li class="step"><span class="step-number">05 / REVIEW</span><div class="stage-heading"><span class="ns-icon ns-refresh-cw" aria-hidden="true"></span><h2>After-action<br>review</h2></div><p>Review the response.<br>Capture lessons learned.</p></li>
       </ol>
       <div class="loop" aria-hidden="true"><svg viewBox="0 0 674 35" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M659 0V28H15V0M8 8L15 1L22 8" stroke="#B85510" stroke-width="1.5"/></svg></div>
       <p class="loop-label">Lessons inform pre-loss planning</p>
       <div class="closing"><p>No retainer. Preparedness support. Dedicated Account and Operations Managers.</p><a href="tel:+18002832933">1-800-283-2933</a></div>
-      <footer class="folio"><span>Conceptual architectural imagery. Program terms are established in the MSA.</span><a href="https://recovery.northstar.com/">recovery.northstar.com</a></footer>
+      <footer class="folio"><span>Program terms are established in the MSA.</span><a href="https://recovery.northstar.com/">recovery.northstar.com</a></footer>
     </section>
   </main>
 </body>

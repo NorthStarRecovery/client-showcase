@@ -8,6 +8,8 @@ Collections can be exported as self-contained HTML or as a designed PDF using th
 
 This repository contains the published static website. GitHub Pages serves the root of the `main` branch. The `.nojekyll` file preserves the prepared HTML, CSS, JavaScript, fonts and imagery without additional processing.
 
-All project illustrations are identified as conceptual. Original documents and private editorial materials are not included.
+The [Marketing Materials collection](https://northstarrecovery.github.io/client-showcase/marketing/) includes seven individually designed flyers, online reading editions, downloadable PDFs and a complete collection archive.
+
+Architectural and project illustrations help explain scale, planning and recovery. Original documents and private editorial materials are not included.
 
 NorthStar branding, project content and imagery remain the property of their respective owners.

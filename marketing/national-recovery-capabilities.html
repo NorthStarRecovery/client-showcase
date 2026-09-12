@@ -23,27 +23,33 @@
     .atlas-title { position: absolute; top: 148px; left: 56px; width: 704px; font-size: 57px; line-height: 1.04; font-weight: 760; font-variation-settings: 'wdth' 112; }
     .atlas-intro { position: absolute; top: 287px; left: 56px; width: 660px; font-size: 19px; line-height: 1.42; }
     .campus { position: absolute; top: 360px; left: 0; width: 816px; height: 350px; background: #071B2C; }
-    .campus img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 64%; }
-    .image-note { position: absolute; top: 722px; left: 56px; font: 9px/1.4 Plex, monospace; letter-spacing: .025em; color: #54626F; }
-    .coverage { position: absolute; left: 56px; top: 749px; width: 704px; display: grid; grid-template-columns: 1fr 160px; gap: 44px; }
-    .coverage h2 { font-size: 27px; line-height: 1.12; margin-bottom: 15px; }
+    .campus img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 45%; }
+    .recovery-rail { position: absolute; top: 739px; left: 56px; width: 704px; display: grid; grid-template-columns: 1fr 48px 1fr 48px 1fr; align-items: center; column-gap: 14px; }
+    .recovery-rail .phase { display: flex; align-items: center; gap: 12px; color: #104C8E; font: 650 22px/1.2 Archivo, sans-serif; font-variation-settings: 'wdth' 108; }
+    .recovery-rail .ns-icon { width: 28px; height: 28px; flex: none; }
+    .recovery-rail img { width: 48px; height: 24px; object-fit: contain; }
+    .coverage { position: absolute; left: 56px; top: 808px; width: 704px; display: grid; grid-template-columns: 150px 1fr; gap: 32px; }
+    .coverage h2 { font-size: 26px; line-height: 1.12; margin-bottom: 14px; }
     .coverage p { font-size: 17px; line-height: 1.5; }
-    .experience { border-top: 3px solid #104C8E; padding-top: 13px; }
-    .experience strong { display: block; font: 720 60px/1 Archivo, sans-serif; font-variation-settings: 'wdth' 110; letter-spacing: -.05em; color: #104C8E; font-variant-numeric: tabular-nums; }
+    .experience { padding-right: 24px; }
+    .experience strong { display: block; font: 720 66px/1 Archivo, sans-serif; font-variation-settings: 'wdth' 110; letter-spacing: -.05em; color: #104C8E; font-variant-numeric: tabular-nums; }
     .experience span { display: block; margin-top: 7px; font-size: 16px; line-height: 1.3; }
-    .sector-line { position: absolute; top: 899px; left: 56px; width: 704px; border-top: 1px solid #C6D1DE; padding-top: 15px; font-size: 16px; line-height: 1.5; }
+    .sector-line { position: absolute; top: 945px; left: 56px; width: 704px; border-top: 1px solid #C6D1DE; padding-top: 12px; font-size: 16px; line-height: 1.5; }
     .folio { position: absolute; left: 56px; right: 56px; bottom: 35px; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid #C6D1DE; padding-top: 13px; color: #54626F; font: 9px/1.4 Plex, monospace; letter-spacing: .055em; text-transform: uppercase; }
     .folio a { text-decoration: none; }
     .page-two h1 { position: absolute; top: 134px; left: 56px; width: 704px; font-size: 41px; line-height: 1.1; }
-    .service-grid { position: absolute; left: 56px; top: 260px; width: 704px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 36px; row-gap: 21px; }
-    .service { min-height: 106px; border-top: 2px solid #104C8E; padding-top: 12px; }
-    .service h2 { font-size: 21px; line-height: 1.13; margin-bottom: 9px; }
+    .service-grid { position: absolute; left: 56px; top: 252px; width: 704px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 36px; row-gap: 18px; }
+    .service { min-height: 108px; border-top: 1px solid #C6D1DE; padding-top: 14px; }
+    .service h2 { display: flex; align-items: flex-start; gap: 11px; font-size: 20px; line-height: 1.13; margin-bottom: 11px; }
+    .service h2 .ns-icon { color: #104C8E; width: 24px; height: 24px; flex: none; }
     .service p { font-size: 16px; line-height: 1.4; }
-    .coordination { position: absolute; left: 56px; top: 644px; width: 704px; }
-    .coordination h2 { font-size: 28px; line-height: 1.1; margin-bottom: 22px; }
-    .coordination-row { display: grid; grid-template-columns: 35px 174px 1fr; column-gap: 14px; padding: 13px 0; border-top: 1px solid #C6D1DE; }
-    .coordination-row .number { font: 14px/1.65 Plex, monospace; color: #B85510; }
-    .coordination-row h3 { font-size: 18px; line-height: 1.34; }
+    .coordination { position: absolute; left: 56px; top: 671px; width: 704px; }
+    .coordination h2 { font-size: 28px; line-height: 1.1; margin-bottom: 23px; }
+    .coordination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .coordination-row { padding-top: 12px; border-top: 2px solid #104C8E; position: relative; }
+    .coordination-row::before { content: ''; position: absolute; left: 0; top: -2px; width: 22px; height: 2px; background: #B85510; }
+    .coordination-row .number { display: block; font: 12px/1.4 Plex, monospace; color: #B85510; margin-bottom: 9px; }
+    .coordination-row h3 { font-size: 19px; line-height: 1.2; margin-bottom: 9px; }
     .coordination-row p { font-size: 16px; line-height: 1.4; }
     .contact { position: absolute; left: 56px; right: 56px; top: 941px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
     .contact span { font-size: 16px; }
@@ -59,13 +65,13 @@
       <div class="document-label">National capabilities<br>Recovery services</div>
       <h1 class="atlas-title">Recovery across<br>complex properties.</h1>
       <p class="atlas-intro">Emergency response, restoration and specialty contracting for the places your organization depends on.</p>
-      <figure class="campus"><img src="../assets/marketing/national-recovery-capabilities.jpg" alt="Conceptual architectural campus with hospitality, healthcare, education, retail, industrial and office buildings."></figure>
-      <p class="image-note">Conceptual architectural imagery.</p>
+      <figure class="campus"><img src="../assets/marketing/national-recovery-capabilities.jpg" alt="Architectural illustration of a commercial district with hospitality, healthcare, education, retail, industrial and office buildings."></figure>
+      <div class="recovery-rail" aria-label="Respond, restore, rebuild"><div class="phase"><span class="ns-icon ns-shield-check" aria-hidden="true"></span><span>Respond</span></div><img src="../assets/brand/motifs/chevron-double.svg" alt=""><div class="phase"><span class="ns-icon ns-layers-3" aria-hidden="true"></span><span>Restore</span></div><img src="../assets/brand/motifs/chevron-double.svg" alt=""><div class="phase"><span class="ns-icon ns-building-2" aria-hidden="true"></span><span>Rebuild</span></div></div>
       <div class="coverage">
-        <div><h2>One point of coordination.</h2><p>Connect immediate recovery needs with the broader scope of remediation, demolition and reconstruction.</p></div>
         <div class="experience"><strong>40+</strong><span>years of<br>experience</span></div>
+        <div><h2>One point of coordination.</h2><p>Connect immediate recovery needs with the broader scope of remediation, demolition and reconstruction.</p></div>
       </div>
-      <p class="sector-line">Retail · Education · Healthcare · Manufacturing<br>Hospitality · Industrial</p>
+      <p class="sector-line">Retail · Education · Healthcare · Manufacturing · Hospitality · Industrial</p>
       <footer class="folio"><a href="https://recovery.northstar.com/">recovery.northstar.com</a><span>National recovery capabilities / 01</span></footer>
     </section>
     <section class="page page-two" aria-label="Services and project coordination">
@@ -73,18 +79,20 @@
       <div class="document-label">Services &amp; coordination<br>40+ years of experience</div>
       <h1>From first assessment<br>to the next operating chapter.</h1>
       <div class="service-grid">
-        <section class="service"><h2>Emergency response</h2><p>Initial assessment and mitigation priorities following property damage or disruption.</p></section>
-        <section class="service"><h2>Restoration</h2><p>Fire and water restoration coordinated around the needs of the property.</p></section>
-        <section class="service"><h2>Demolition</h2><p>Demolition services aligned with the approved project scope and site requirements.</p></section>
-        <section class="service"><h2>Hazardous materials abatement</h2><p>Abatement of hazardous building materials as part of the recovery or project scope.</p></section>
-        <section class="service"><h2>Environmental remediation</h2><p>Remediation services for affected buildings and sites.</p></section>
-        <section class="service"><h2>Reconstruction</h2><p>Repair and rebuilding that carry the property into its next phase.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-shield-check" aria-hidden="true"></span><span>Emergency response</span></h2><p>Initial assessment and mitigation priorities following property damage or disruption.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-droplets" aria-hidden="true"></span><span>Restoration</span></h2><p>Fire and water restoration coordinated around the needs of the property.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-layers-3" aria-hidden="true"></span><span>Demolition</span></h2><p>Demolition services aligned with the approved project scope and site requirements.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-scan-line" aria-hidden="true"></span><span>Hazardous materials abatement</span></h2><p>Abatement of hazardous building materials as part of the recovery or project scope.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-leaf" aria-hidden="true"></span><span>Environmental remediation</span></h2><p>Remediation services for affected buildings and sites.</p></section>
+        <section class="service"><h2><span class="ns-icon ns-building-2" aria-hidden="true"></span><span>Reconstruction</span></h2><p>Repair and rebuilding that carry the property into its next phase.</p></section>
       </div>
       <section class="coordination">
         <h2>Make the next decision clear.</h2>
-        <div class="coordination-row"><span class="number">01</span><h3>Assess and prioritize</h3><p>Evaluate initial safety concerns and establish mitigation priorities.</p></div>
-        <div class="coordination-row"><span class="number">02</span><h3>Define and approve</h3><p>Develop the scope and cost reserve for client review and approval.</p></div>
-        <div class="coordination-row"><span class="number">03</span><h3>Document and update</h3><p>Coordinate through an Operations Manager, with daily updates, logs, photos and financial estimates.</p></div>
+        <div class="coordination-grid">
+          <div class="coordination-row"><span class="number">01 / ASSESS</span><h3>Assess and prioritize</h3><p>Evaluate initial safety concerns and establish mitigation priorities.</p></div>
+          <div class="coordination-row"><span class="number">02 / APPROVE</span><h3>Define and approve</h3><p>Develop the scope and cost reserve for client review and approval.</p></div>
+          <div class="coordination-row"><span class="number">03 / DOCUMENT</span><h3>Document and update</h3><p>An Operations Manager coordinates daily updates, logs, photos and financial estimates.</p></div>
+        </div>
       </section>
       <div class="contact"><span>Connect with NorthStar</span><a href="tel:+18002832933">1-800-283-2933</a></div>
       <footer class="folio"><a href="https://recovery.northstar.com/">recovery.northstar.com</a><span>National recovery capabilities / 02</span></footer>
