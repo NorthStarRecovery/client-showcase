@@ -1,0 +1,176 @@
+[
+  {
+    "id": "manufacturing",
+    "headline": "Facility recovery built around your next production milestone.",
+    "deck": "A plant's recovery depends on how its spaces work together. NorthStar brings restoration, remediation and structural repairs to the facility priorities behind your next production milestone.",
+    "audience": "Plant leadership · Facilities and engineering · EHS and quality",
+    "proofNumber": "23",
+    "proofUnit": "days to production restart",
+    "proofNote": "Following Hurricane Laura in August 2020, production began at Firestone's Lake Charles polymers plant after a 23-day recovery effort. That milestone describes restart; final project completion is unspecified.",
+    "readinessTitle": "Bring the production sequence into the plan.",
+    "readinessIntro": "Start a working session with the plant manager, engineering, EHS and quality. Use the next operating milestone to identify the spaces and decisions that deserve attention before a loss.",
+    "agenda": [
+      {
+        "title": "Critical spaces",
+        "text": "Which production, storage and loading areas must be available together for the next operating milestone?"
+      },
+      {
+        "title": "Operating constraints",
+        "text": "Where will access, utilities or adjacent activity affect restoration and material removal?"
+      },
+      {
+        "title": "Restart authority",
+        "text": "Which engineering, equipment and quality contacts approve the handover and production restart?"
+      }
+    ],
+    "ctaLabel": "Review your plant's recovery priorities",
+    "ctaText": "Bring your plant team and NorthStar together to review critical spaces, access needs and the physical recovery priorities behind your next operating milestone.",
+    "label": "Manufacturing",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/firestone-polymers-plant/"
+  },
+  {
+    "id": "industrial",
+    "headline": "A clear next stage for complex industrial sites.",
+    "deck": "After an incident or ahead of planned change, NorthStar connects physical recovery with demolition, environmental work and site restoration. Build the work around retained assets and the intended end condition.",
+    "audience": "Site and asset managers · EHS · Capital projects",
+    "proofNumber": "100",
+    "proofUnit": "days for demolition and remediation",
+    "proofNote": "At the ProLogis / FedEx facility in 2020, demolition and remediation covered two tornado-damaged buildings totaling 1.15 million square feet. The 100-day milestone excludes full rebuilding of those facilities.",
+    "readinessTitle": "Make the site's end condition explicit.",
+    "readinessIntro": "Bring site leadership, EHS and the relevant engineering specialists to the table. Review retained operations, available material information and the condition the owner expects when the agreed work is complete.",
+    "agenda": [
+      {
+        "title": "Retained operations",
+        "text": "Which utilities, access routes and assets must remain available, and who authorizes changes to them?"
+      },
+      {
+        "title": "Material information",
+        "text": "What surveys, hazard records and disposal requirements are available for the affected structures and materials?"
+      },
+      {
+        "title": "Completion criteria",
+        "text": "What must be removed, restored or left ready for the site's next stage?"
+      }
+    ],
+    "ctaLabel": "Review your site's next stage",
+    "ctaText": "Discuss site conditions, retained operations and the required end condition with NorthStar. Establish the appropriate recovery and specialist team for the work ahead.",
+    "label": "Industrial",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/prologis-fedex-facility/"
+  },
+  {
+    "id": "commercial-real-estate",
+    "headline": "A recovery plan for every property you manage.",
+    "deck": "Owners need informed decisions. Property teams need a workable plan. NorthStar connects restoration and repair with building access, tenant priorities and the approvals that move recovery forward.",
+    "audience": "Owners and asset managers · Property managers · Building engineers",
+    "proofNumber": "National",
+    "proofUnit": "portfolio program · 2009 to 2015",
+    "proofNote": "NorthStar's historical master service agreement with Jones Lang LaSalle and HSBC supported fire, water and disaster recovery across a national portfolio during 2009 to 2015. It is not a current-contract claim.",
+    "readinessTitle": "Start with the property you know best.",
+    "readinessIntro": "Choose one property for a readiness discussion with its manager and building engineer. Use the building's actual access conditions, tenant responsibilities and approval process to make the conversation specific.",
+    "agenda": [
+      {
+        "title": "Authority and approvals",
+        "text": "Who can authorize emergency work, approve changes and brief ownership on recovery decisions?"
+      },
+      {
+        "title": "Access and occupancy",
+        "text": "Which entrances, loading routes, occupied areas and working hours will shape the work?"
+      },
+      {
+        "title": "Tenant responsibilities",
+        "text": "Who owns each affected space, and who will keep tenants informed as recovery progresses?"
+      }
+    ],
+    "ctaLabel": "Review one property's recovery plan",
+    "ctaText": "Bring your property manager and building engineer into a NorthStar readiness discussion about access, authorization, tenant responsibilities and the information your building team needs.",
+    "label": "Commercial real estate",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/jones-lang-lasalle-hsbc/"
+  },
+  {
+    "id": "medical",
+    "headline": "Prepare the space your care teams depend on.",
+    "deck": "Physical recovery in a healthcare facility needs a clear relationship with the people directing care. NorthStar works with your designated teams on restoration, remediation and repairs within facility-led requirements.",
+    "audience": "Facilities and engineering · Infection prevention · Emergency management",
+    "proofNumber": "100,000+",
+    "proofUnit": "square feet of preparatory work",
+    "proofNote": "At North Central Bronx Hospital in 2020, preparation across eight floors supported the wider ICU reconstruction program. The four-week intensive effort describes preparatory work, rather than completion of the clinical expansion.",
+    "readinessTitle": "Bring facility requirements into the first conversation.",
+    "readinessIntro": "Invite facilities, infection prevention and emergency management to review the setting together. Begin with occupied areas, access needs and the work information each team needs to support facility-led decisions.",
+    "agenda": [
+      {
+        "title": "Affected and adjacent",
+        "text": "Which departments and occupied spaces sit beside the proposed work, and what access restrictions apply?"
+      },
+      {
+        "title": "Utility and water contacts",
+        "text": "Who reviews building utilities and water-system concerns alongside physical restoration work?"
+      },
+      {
+        "title": "Facility handoff",
+        "text": "What records and completion reviews do the authorized facility teams need before deciding how space returns to use?"
+      }
+    ],
+    "ctaLabel": "Review your facility's recovery requirements",
+    "ctaText": "Meet with NorthStar and your designated facility teams to review work areas, access, communication and the information needed for a planned recovery handoff.",
+    "label": "Medical",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/north-central-bronx-hospital/"
+  },
+  {
+    "id": "education",
+    "headline": "Plan recovery around the places students depend on.",
+    "deck": "Classrooms, residence halls and dining spaces serve different needs on the same calendar. NorthStar helps campus and district teams plan physical recovery around the buildings and services they need first.",
+    "audience": "Campus and district facilities · Operations · Risk and procurement",
+    "proofNumber": "130",
+    "proofUnit": "buildings in the recovery scope",
+    "proofNote": "At UNC Wilmington after Hurricane Florence in 2018, recovery covered 130 buildings. First building turnovers began after four weeks; that milestone does not mean all buildings were complete.",
+    "readinessTitle": "Put the academic calendar beside the building list.",
+    "readinessIntro": "Bring facilities, operations and the authorized decision-makers together before an incident. Match priority buildings to the services they support, then discuss the dates and temporary arrangements that would shape recovery.",
+    "agenda": [
+      {
+        "title": "Priority buildings",
+        "text": "Which classrooms, residences and service spaces need to return first, and what functions depend on them?"
+      },
+      {
+        "title": "Decision contacts",
+        "text": "Who can authorize emergency work, approve changes and keep campus or district leadership informed?"
+      },
+      {
+        "title": "Calendar and alternatives",
+        "text": "Which dates, occupied areas and temporary arrangements will influence access and the order of recovery?"
+      }
+    ],
+    "ctaLabel": "Review your campus recovery priorities",
+    "ctaText": "Bring your priority building list to NorthStar. Discuss the calendar, essential services and authorized contacts that should guide physical recovery across your campus or district.",
+    "label": "Education",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/unc-wilmington-hurricane-florence/"
+  },
+  {
+    "id": "technology",
+    "headline": "Physical recovery for the places your technology depends on.",
+    "deck": "Sensitive operations rely on physical spaces with specific requirements. NorthStar addresses property damage and repairs alongside your facilities team, while technical owners direct system isolation, testing, restart and acceptance.",
+    "audience": "Critical facilities · Site operations · Technical owners and EHS",
+    "proofNumber": "Phased",
+    "proofUnit": "work around active building services",
+    "proofNote": "Pentagon renovations during 2001 to 2011 demonstrate adjacent government-facility experience in phased abatement and demolition around active services. This example does not establish direct data-center project experience for NorthStar.",
+    "readinessTitle": "Bring technical owners into the property plan.",
+    "readinessIntro": "Begin with facilities, EHS and the specialists responsible for critical systems. Review the physical recovery assignment alongside access controls, environmental requirements and the approvals needed before each technical handoff.",
+    "agenda": [
+      {
+        "title": "Critical spaces",
+        "text": "Which rooms and supporting areas need particular access controls or environmental conditions?"
+      },
+      {
+        "title": "Authorized work",
+        "text": "Who approves entry, work boundaries and activity near sensitive systems?"
+      },
+      {
+        "title": "Technical handoffs",
+        "text": "Which specialists direct isolation, testing, restart and acceptance, and what project information do they need?"
+      }
+    ],
+    "ctaLabel": "Review your critical-space recovery plan",
+    "ctaText": "Bring your facilities and technical owners into a NorthStar discussion about site requirements, authorized access and the physical recovery work appropriate for your property.",
+    "label": "Technology",
+    "leadProofUrl": "https://northstarrecovery.github.io/client-showcase/projects/pentagon-renovations/"
+  }
+]

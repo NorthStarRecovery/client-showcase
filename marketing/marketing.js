@@ -9,6 +9,24 @@
   const clear = document.querySelector('#mk-clear-filters');
   const count = document.querySelector('#mk-count');
   const empty = document.querySelector('#mk-empty');
+  const scenes = [...document.querySelectorAll('.mk-focus-scene')];
+  const focusStatus = document.querySelector('#mk-focus-status');
+  const focusSelect = document.querySelector('#mk-focus-select');
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let currentScene = scenes.find(scene => !scene.hidden);
+  function showIndustry(category) {
+    const scene = scenes.find(item => item.dataset.industry === category) || scenes[0];
+    if (!scene) return;
+    const changed = currentScene !== scene;
+    scenes.forEach(item => { item.hidden = item !== scene; });
+    currentScene = scene;
+    focusSelect.value = scene.dataset.industry;
+    focusStatus.textContent = scene.dataset.industry + ' in focus';
+    if (changed && !motion.matches && typeof scene.animate === 'function') {
+      scene.getAnimations().forEach(animation => animation.cancel());
+      scene.animate([{ opacity: .4, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    }
+  }
   const normalize = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
   const searchableText = new Map(cards.map(card => [card, normalize(card.dataset.search || '')]));
   function restoreQuery() {
@@ -18,7 +36,7 @@
       select.value = [...select.options].some(option => option.value === params.get(key)) ? params.get(key) : '';
     }
   }
-  function filter(updateUrl = true) {
+  function filter(updateUrl = true, hash) {
     const category = categorySelect.value;
     const format = formatSelect.value;
     const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
@@ -36,12 +54,14 @@
     count.textContent = visible + (visible === 1 ? ' material' : ' materials') + (filtered ? ' found' : '');
     clear.hidden = !filtered;
     empty.hidden = visible > 0;
+    showIndustry(category);
     if (updateUrl) {
       const url = new URL(location.href);
       if (search.value.trim()) url.searchParams.set('q', search.value.trim()); else url.searchParams.delete('q');
       if (category) url.searchParams.set('category', category); else url.searchParams.delete('category');
       if (format) url.searchParams.set('format', format); else url.searchParams.delete('format');
-      history.replaceState(null, '', url);
+      if (hash !== undefined) url.hash = hash;
+      history[updateUrl === 'push' ? 'pushState' : 'replaceState'](null, '', url);
     }
   }
   function reset() {
@@ -54,15 +74,49 @@
   search.addEventListener('input', () => filter());
   categorySelect.addEventListener('change', () => filter());
   formatSelect.addEventListener('change', () => filter());
+  focusSelect.addEventListener('change', () => {
+    categorySelect.value = focusSelect.value;
+    formatSelect.value = '';
+    search.value = '';
+    filter('push', 'industry-focus');
+  });
   categoryLinks.forEach(link => link.addEventListener('click', event => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     categorySelect.value = link.dataset.jumpCategory;
     formatSelect.value = '';
     search.value = '';
-    filter();
-    document.querySelector('#materials').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    const industry = scenes.some(scene => scene.dataset.industry === link.dataset.jumpCategory);
+    filter('push', industry ? 'industry-focus' : 'materials');
+    document.querySelector(industry ? '#industry-focus' : '#materials').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    (industry ? currentScene.querySelector('h2') : search).focus({ preventScroll: true });
+  }));
+  document.querySelector('.mk-focus-navigation a').addEventListener('click', event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    categorySelect.value = '';
+    formatSelect.value = '';
+    search.value = '';
+    filter('push', 'materials');
+    document.querySelector('#materials').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
     search.focus({ preventScroll: true });
+  });
+  // The document base serves static releases; in-page links retain their selected industry.
+  document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const hash = link.getAttribute('href');
+    const target = document.getElementById(hash.slice(1));
+    if (!target) return;
+    event.preventDefault();
+    const url = new URL(location.href);
+    url.hash = hash;
+    history.pushState(null, '', url);
+    target.scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    const heading = hash === '#industry-focus' ? currentScene.querySelector('h2') : target.querySelector('h2');
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
   }));
   document.querySelector('#mk-reset').addEventListener('click', reset);
   clear.addEventListener('click', reset);
@@ -71,9 +125,9 @@
     filter(false);
   });
   document.querySelector('#mk-tools').hidden = false;
+  document.querySelector('#mk-focus-switch').hidden = false;
   restoreQuery();
   filter(false);
-  const motion = matchMedia('(prefers-reduced-motion: reduce)');
   if (!motion.matches && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) {
