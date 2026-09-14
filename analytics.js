@@ -1,13 +1,10 @@
-/* Optional public-site measurement. No Google tag is loaded until analytics is allowed. */
+/* Automatic measurement on the configured public showcase; inactive without a valid Measurement ID. */
 (() => {
   'use strict';
   const config = window.NORTHSTAR_ANALYTICS_CONFIG || {};
   const measurementId = typeof config.measurementId === 'string' ? config.measurementId : '';
   const base = typeof config.publicBasePath === 'string' ? config.publicBasePath : '';
-  const consentKey = 'northstar.analytics.choice.v1';
   const campaignKey = 'northstar.analytics.campaign.v1';
-  const revokeKey = 'northstar.analytics.revoked.v1';
-  const revokeWindowPrefix = '__northstar_analytics_denied_v1__';
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const events = new Set(['page_view', 'case_view', 'industry_select', 'material_view', 'file_download',
     'contact_click', 'project_selection', 'collection_action', 'portfolio_open', 'portfolio_created',
@@ -48,40 +45,23 @@
   }
   if (!eligible()) return;
 
-  let consent = null;
   let initialized = false;
   let failed = false;
   let lastPage = '';
   let lastMaterial = '';
   let currentPage = {};
   let campaign = {};
-  let banner, settingsButton, statusText, closeButton;
-  let restoreFocus = null;
-  let googleScript = null;
   const disabledKey = `ga-disable-${measurementId}`;
   const campaignFields = [['campaign_source', 'utm_source', config.campaignSources],
     ['campaign_medium', 'utm_medium', config.campaignMediums], ['campaign_name', 'utm_campaign', config.campaignNames]];
-  // Keep only approved entry labels in memory, so an SPA route change before Allow does not erase attribution.
+  // Keep only approved entry labels, so SPA navigation does not erase the incoming campaign.
   const entryCampaign = captureEntryCampaign();
-  window[disabledKey] = true;
 
   function storageGet(kind, key) {
     try { return window[kind].getItem(key); } catch { return null; }
   }
   function storageSet(kind, key, value) {
     try { window[kind].setItem(key, value); return true; } catch { return false; }
-  }
-  function storageRemove(kind, key) {
-    try { window[kind].removeItem(key); } catch { /* Storage can be disabled without blocking the page. */ }
-  }
-  function readChoice() {
-    try {
-      const saved = JSON.parse(storageGet('localStorage', consentKey) || 'null');
-      if (saved?.version === 1 && ['granted', 'denied'].includes(saved.choice)
-        && Number.isFinite(saved.savedAt) && saved.savedAt <= Date.now()
-        && saved.savedAt + lifetime > Date.now()) return saved.choice;
-    } catch { /* Invalid or unavailable storage means no consent. */ }
-    return null;
   }
   function normalizeSlug(value) {
     if (typeof value !== 'string' || value.length > 80) return '';
@@ -182,7 +162,7 @@
   }
   function gtag() { window.dataLayer.push(arguments); }
   function send(name, properties) {
-    if (consent !== 'granted' || !initialized || failed || !eligible() || window[disabledKey]) return false;
+    if (!initialized || failed || !eligible() || window[disabledKey]) return false;
     // Reassert clean defaults for GA-generated session/engagement events after SPA navigation.
     const page = pageParameters();
     gtag('set', page);
@@ -203,7 +183,7 @@
   function page(properties) {
     if (!eligible()) return false;
     currentPage = { ...inferredPage(), ...safeProperties(properties) };
-    if (consent !== 'granted' || !initialized || failed) return false;
+    if (!initialized || failed) return false;
     const path = location.pathname;
     if (lastPage === path) return false;
     if (!send('page_view', currentPage)) return false;
@@ -215,18 +195,15 @@
     return true;
   }
   function initialize() {
-    if (initialized || consent !== 'granted' || !eligible()) return;
+    if (initialized || !eligible() || window[disabledKey]) return;
     initialized = true;
     failed = false;
-    window[disabledKey] = false;
     campaign = readCampaign();
     window.dataLayer = window.dataLayer || [];
-    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied',
+    gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied',
       ad_user_data: 'denied', ad_personalization: 'denied' });
     gtag('set', { ...pageParameters(), allow_google_signals: false, allow_ad_personalization_signals: false,
       ads_data_redaction: true, url_passthrough: false });
-    gtag('consent', 'update', { analytics_storage: 'granted', ad_storage: 'denied',
-      ad_user_data: 'denied', ad_personalization: 'denied' });
     gtag('js', new Date());
     gtag('config', measurementId, { ...pageParameters(), campaign_source: '', campaign_medium: '', campaign_name: '',
       ...campaign, send_page_view: false,
@@ -235,7 +212,7 @@
       cookie_domain: 'none', cookie_path: base, cookie_expires: lifetime / 1000,
       cookie_flags: 'SameSite=Lax;Secure' });
     // The tag fetch itself cannot carry a raw page query or recipient in its Referer header.
-    googleScript = document.createElement('script');
+    const googleScript = document.createElement('script');
     googleScript.async = true;
     googleScript.referrerPolicy = 'no-referrer';
     googleScript.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
@@ -244,78 +221,8 @@
     page(currentPage);
     document.dispatchEvent(new CustomEvent('northstar:analytics-ready'));
   }
-  function clearCookies() {
-    let names = [];
-    try { names = document.cookie.split(';').map(part => part.trim().split('=')[0]).filter(name => /^_ga(?:_|$)|^_gid$|^_gat(?:_|$)/.test(name)); } catch { return; }
-    const paths = new Set(['/', base, base.slice(0, -1)]);
-    const segments = location.pathname.split('/').filter(Boolean);
-    for (let i = 1; i <= segments.length; i++) {
-      paths.add('/' + segments.slice(0, i).join('/'));
-      paths.add('/' + segments.slice(0, i).join('/') + '/');
-    }
-    const domains = ['', location.hostname, '.' + location.hostname];
-    for (const name of names) for (const path of paths) for (const domain of domains) {
-      try { document.cookie = `${name}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=${path};${domain ? ` Domain=${domain};` : ''} SameSite=Lax; Secure`; } catch { /* Browsers may deny cookie access. */ }
-    }
-  }
-  function hideBanner() {
-    if (!banner) return;
-    const focusInside = banner.contains(document.activeElement);
-    banner.hidden = true;
-    settingsButton.setAttribute('aria-expanded', 'false');
-    if (focusInside) {
-      if (restoreFocus?.isConnected) restoreFocus.focus();
-      else {
-        const nearby = document.querySelector('body > header a[href], body > header button, .screen-tools a[href], main a[href], main button');
-        (nearby || settingsButton).focus({ preventScroll: true });
-      }
-    }
-    restoreFocus = null;
-  }
-  function openSettings() {
-    if (!banner || !eligible()) return false;
-    restoreFocus = document.activeElement;
-    banner.hidden = false;
-    closeButton.hidden = consent === null;
-    statusText.textContent = consent === 'granted' ? 'Analytics is currently allowed on this browser.'
-      : consent === 'denied' ? 'Analytics is currently off on this browser.' : 'Your choice is optional.';
-    settingsButton.setAttribute('aria-expanded', 'true');
-    banner.scrollIntoView({ block: 'start', behavior: 'instant' });
-    banner.querySelector('h2').focus({ preventScroll: true });
-    return true;
-  }
-  function choose(choice, fromAnotherTab = false) {
-    const wasInitialized = initialized;
-    consent = choice;
-    if (!fromAnotherTab) storageSet('localStorage', consentKey, JSON.stringify({ version: 1, choice, savedAt: Date.now() }));
-    hideBanner();
-    if (choice === 'granted') {
-      storageRemove('sessionStorage', revokeKey);
-      if (window.name.startsWith(revokeWindowPrefix)) window.name = window.name.slice(revokeWindowPrefix.length);
-      initialize();
-      return;
-    }
-    window[disabledKey] = true;
-    storageRemove('sessionStorage', campaignKey);
-    campaign = {};
-    clearCookies();
-    if (wasInitialized) {
-      gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied',
-        ad_user_data: 'denied', ad_personalization: 'denied' });
-      googleScript?.remove();
-      // A tab-scoped fallback prevents reactivation if durable storage stopped working.
-      if (!storageSet('sessionStorage', revokeKey, '1')) {
-        // A constant tab-only marker also covers read-only storage with an older saved Allow.
-        if (!window.name.startsWith(revokeWindowPrefix)) window.name = revokeWindowPrefix + window.name;
-      }
-      // Unload the already-loaded vendor code rather than leaving engagement listeners alive.
-      location.reload();
-    }
-  }
   function delegatedClick(event) {
     const target = event.target instanceof Element ? event.target : event.target?.parentElement;
-    const settings = target?.closest('[data-analytics-settings]');
-    if (settings) { openSettings(); return; }
     const anchor = target?.closest('a[href]');
     if (!anchor || event.defaultPrevented || (event.type === 'auxclick' && event.button !== 1)) return;
     let url;
@@ -342,62 +249,18 @@
     if (!eligible()) return;
     const utility = document.createElement('nav');
     utility.className = 'ns-analytics-utility';
-    utility.setAttribute('aria-label', 'Privacy controls');
+    utility.setAttribute('aria-label', 'Privacy information');
     const privacy = document.createElement('a');
     privacy.href = base + 'privacy.html';
     privacy.textContent = 'Privacy';
-    settingsButton = document.createElement('button');
-    settingsButton.type = 'button';
-    settingsButton.textContent = 'Analytics settings';
-    settingsButton.setAttribute('aria-expanded', 'false');
-    settingsButton.setAttribute('aria-controls', 'ns-analytics-choice');
-    settingsButton.addEventListener('click', openSettings);
-    utility.append(privacy, settingsButton);
-    banner = document.createElement('section');
-    banner.id = 'ns-analytics-choice';
-    banner.className = 'ns-analytics-banner';
-    banner.setAttribute('aria-labelledby', 'ns-analytics-title');
-    banner.hidden = true;
-    banner.innerHTML = '<div class="ns-analytics-copy"><h2 id="ns-analytics-title" tabindex="-1">Help us understand what is useful.</h2>'
-      + '<p>With your permission, Google Analytics measures visits, content views and download clicks. '
-      + 'We do not send names, email addresses or text you enter. The website works with analytics off.</p>'
-      + '<p class="ns-analytics-status"></p></div><div class="ns-analytics-actions">'
-      + '<button type="button" data-analytics-choice="denied">Decline analytics</button>'
-      + '<button type="button" data-analytics-choice="granted">Allow analytics</button>'
-      + '<button type="button" class="ns-analytics-close">Close settings</button></div>';
-    statusText = banner.querySelector('.ns-analytics-status');
-    closeButton = banner.querySelector('.ns-analytics-close');
-    closeButton.addEventListener('click', hideBanner);
-    banner.querySelectorAll('[data-analytics-choice]').forEach(button => {
-      button.addEventListener('click', () => choose(button.dataset.analyticsChoice));
-    });
-    banner.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && consent !== null) { hideBanner(); event.stopPropagation(); }
-    });
-    const pageHeader = document.querySelector('body > header');
-    if (pageHeader) pageHeader.before(banner);
-    else document.body.prepend(banner);
+    utility.append(privacy);
     document.body.append(utility);
     document.addEventListener('click', delegatedClick);
     document.addEventListener('auxclick', delegatedClick);
-    window.addEventListener('storage', event => {
-      if (event.key !== consentKey) return;
-      const updated = readChoice();
-      if (updated !== 'granted' && consent === 'granted') choose('denied', true);
-    });
     currentPage = { ...inferredPage(), ...currentPage };
-    consent = storageGet('sessionStorage', revokeKey) === '1' || window.name.startsWith(revokeWindowPrefix)
-      ? 'denied' : readChoice();
-    if (consent === 'granted') initialize();
-    else if (consent === null) {
-      // A non-modal notice leaves keyboard focus and normal browsing uninterrupted.
-      banner.hidden = false;
-      closeButton.hidden = true;
-      statusText.textContent = 'Your choice is optional. You can change it in Analytics settings.';
-      settingsButton.setAttribute('aria-expanded', 'true');
-    } else clearCookies();
+    initialize();
   }
-  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings });
+  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings: noOp });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
   else mount();
 })();

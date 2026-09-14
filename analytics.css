@@ -1,25 +1,8 @@
-/* Shared consent controls are screen-only and independent of the document layouts. */
-.ns-analytics-utility,.ns-analytics-banner{font-family:Instrument,InstrumentSans,'Instrument Sans',Arial,sans-serif;font-size:14px;line-height:1.5;box-sizing:border-box;letter-spacing:normal;text-transform:none}
-.ns-analytics-utility *,.ns-analytics-banner *{box-sizing:border-box}
-.ns-analytics-utility{position:relative;z-index:20;display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;min-height:60px;padding:10px 20px;background:#071B2C;color:#fff;border-top:1px solid #60788d}
-.ns-analytics-utility a,.ns-analytics-utility button{appearance:none;font:inherit;line-height:1.5;color:#fff;background:transparent;border:0;border-radius:2px;padding:10px 3px;min-height:44px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
-.ns-analytics-banner{position:relative;width:calc(100% - 40px);max-width:1100px;margin:20px auto;padding:24px 28px;display:flex;align-items:center;gap:28px;color:#071B2C;background:#fff;border:1px solid #899bad;border-top:4px solid #104C8E;border-radius:2px;scroll-margin-top:150px}
-.ns-analytics-banner[hidden],.ns-analytics-banner [hidden]{display:none!important}
-.ns-analytics-copy{flex:1;min-width:0}
-.ns-analytics-banner h2{font-family:Archivo,Arial,sans-serif;font-variation-settings:'wdth' 110;font-size:22px;font-weight:650;line-height:1.15;letter-spacing:-.015em;text-transform:none;color:#071B2C;margin:0 0 10px}
-.ns-analytics-banner p{font:inherit;font-size:14px;line-height:1.5;color:#324b60;margin:0;max-width:70ch}
-.ns-analytics-banner .ns-analytics-status{margin-top:8px;font-size:12px;color:#475f72}
-.ns-analytics-actions{flex:0 0 190px;display:grid;gap:10px}
-.ns-analytics-actions button{appearance:none;min-height:44px;width:100%;margin:0;padding:11px 16px;font:inherit;font-size:14px;font-weight:600;line-height:1.35;border:1px solid #104C8E;border-radius:2px;background:#104C8E;color:#fff;cursor:pointer;white-space:normal;text-align:center;letter-spacing:normal;text-transform:none}
-.ns-analytics-actions button:hover{background:#071B2C;border-color:#071B2C}
-.ns-analytics-actions .ns-analytics-close{color:#104C8E;background:#fff;border-color:#8295a5;font-weight:400}
-.ns-analytics-actions .ns-analytics-close:hover{background:#edf2f5}
+/* Screen-only privacy link; website measurement has no opt-in banner or settings prompt. */
+.ns-analytics-utility{position:relative;display:flex;justify-content:center;align-items:center;min-height:60px;padding:10px 20px;background:#071B2C;color:#fff;border-top:1px solid #60788d;font-family:Instrument,InstrumentSans,'Instrument Sans',Arial,sans-serif;font-size:14px;line-height:1.5;box-sizing:border-box;letter-spacing:normal;text-transform:none}
+.ns-analytics-utility a{display:inline-flex;align-items:center;font:inherit;color:#fff;padding:10px 3px;min-height:44px;text-decoration:underline;text-underline-offset:4px}
 .ns-analytics-utility :focus-visible{outline:3px solid #fff;outline-offset:3px}
-.ns-analytics-banner :focus-visible{outline:3px solid #104C8E;outline-offset:3px}
-.ns-analytics-banner h2:focus{outline:0}
-@media(max-width:640px){.ns-analytics-banner{width:calc(100% - 24px);margin:12px auto;padding:20px;gap:18px;display:block}.ns-analytics-banner h2{font-size:20px}.ns-analytics-actions{margin-top:18px;grid-template-columns:1fr 1fr;gap:10px}.ns-analytics-actions .ns-analytics-close{grid-column:1/-1}}
-@media(prefers-reduced-motion:reduce){.ns-analytics-utility *,.ns-analytics-banner *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-@media print{.ns-analytics-utility,.ns-analytics-banner{display:none!important}}
+@media print{.ns-analytics-utility{display:none!important}}
 
 /* The privacy explanation shares the site's local fonts and authentic wordmark. */
 @font-face{font-family:NorthStarPrivacyArchivo;src:url('fonts/v2/archivo.ttf') format('truetype');font-weight:100 900;font-stretch:62% 125%;font-display:swap}
@@ -39,8 +22,7 @@
 .ns-privacy-content ul{padding-left:24px;margin:16px 0 22px}
 .ns-privacy-content li{margin:9px 0}
 .ns-privacy-content a{color:#104C8E;text-underline-offset:3px}
-.ns-privacy-content button{font:inherit;background:#104C8E;color:#fff;border:1px solid #104C8E;padding:12px 20px;min-height:44px;cursor:pointer;border-radius:2px}
 .ns-privacy-page :focus-visible{outline:3px solid #2F86FF;outline-offset:4px}
 .ns-privacy-note{padding:20px 0;border-top:1px solid #aebac5;border-bottom:1px solid #aebac5}
 .ns-privacy-footer{padding:26px;text-align:center;background:#071B2C;color:#fff;font-size:14px}
-@media print{.ns-privacy-page .ns-privacy-header{background:#fff;color:#071B2C}.ns-privacy-header>a:last-child,.ns-privacy-content button,.ns-privacy-footer{display:none}.ns-privacy-content{padding:24px;max-width:none}}
+@media print{.ns-privacy-page .ns-privacy-header{background:#fff;color:#071B2C}.ns-privacy-header>a:last-child,.ns-privacy-footer{display:none}.ns-privacy-content{padding:24px;max-width:none}}
