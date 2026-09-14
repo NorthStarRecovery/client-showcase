@@ -1,6 +1,6 @@
 /* Public GA4 configuration. A Measurement ID is public, never an account password. */
 window.NORTHSTAR_ANALYTICS_CONFIG = Object.freeze({
-  measurementId: '',
+  measurementId: 'G-3VW7MFYBT8',
   allowedHosts: Object.freeze(['northstarrecovery.github.io']),
   publicBasePath: '/client-showcase/',
   campaignSources: Object.freeze(['linkedin', 'email', 'newsletter', 'qr', 'northstar', 'website', 'event']),
