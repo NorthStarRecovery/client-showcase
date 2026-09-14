@@ -266,7 +266,13 @@
     const logoUrl = resourceUrl(options.logo);
     const [css, pairs] = await Promise.all([stylesheet(), Promise.all(paths.map(async path => [path, await embed(path, path !== logoUrl)]))]); if (popup.closed) return null;
     popup.document.open(); popup.document.write(render(studies, options, css, new Map(pairs))); popup.document.close(); popup.opener = null;
-    const ready = await popup.NorthStarPortfolioReady; return { window: popup, count: studies.length, pages: ready.pages, warnings: [] };
+    const ready = await popup.NorthStarPortfolioReady;
+    // These live-preview listeners remain in the parent; portable files contain no analytics.
+    const properties = {page_type:'portfolio',edition:options.edition,project_count:studies.length,page_count:ready.pages};
+    popup.document.getElementById('download-html')?.addEventListener('click', () => window.NorthStarAnalytics?.track('portfolio_download',{...properties,file_extension:'html',action:'requested'}));
+    popup.document.getElementById('print-portfolio')?.addEventListener('click', () => window.NorthStarAnalytics?.track('print_requested',{...properties,method:'print'}));
+    popup.document.getElementById('download-pdf')?.addEventListener('click', () => window.NorthStarAnalytics?.track(popup.document.body.dataset.pdfEndpoint?'portfolio_download':'print_requested',{...properties,file_extension:'pdf',action:'requested',method:popup.document.body.dataset.pdfEndpoint?'download':'save_pdf'}));
+    return { window: popup, count: studies.length, pages: ready.pages, warnings: [] };
   }
   function open(studies, options) {
     if (!Array.isArray(studies) || !studies.length) return Promise.reject(new Error('Select at least one project for your portfolio.'));

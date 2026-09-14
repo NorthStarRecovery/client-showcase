@@ -32,6 +32,16 @@
   const savedCollections = Array.isArray(store.collections) ? store.collections : store.collections && typeof store.collections === 'object' ? Object.entries(store.collections).map(([name,value]) => ({name,ids:Array.isArray(value) ? value : value?.ids || value?.selection || []})) : [];
   let collections = savedCollections.filter(item => item && typeof item.name === 'string').map(item => ({name:item.name.slice(0,80), ids:cleanIds(item.ids)}));
   let sector = '', view = store.view === 'list' ? 'list' : 'grid', limit = 12, filtered = [], current = null;
+  let analyticsCase = null;
+  const track = (name, properties) => window.NorthStarAnalytics?.track(name, properties);
+  function reportCase(project) {
+    window.NorthStarAnalytics?.page({page_type:'case_study',project_id:project.id,industry:project.sector});
+    if (analyticsCase !== project.id) track('case_view',{project_id:project.id,industry:project.sector});
+    analyticsCase = project.id;
+  }
+  document.addEventListener('northstar:analytics-ready', () => {
+    if (current && byId.has(current)) track('case_view',{project_id:current,industry:byId.get(current).sector});
+  });
   let feature = 0, featureRevision = 0, toastTimer, searchTimer;
   const featured = ['ritz-carlton-naples','prologis-fedex-facility','capital-one-tower','flagler-college','el-conquistador-resort'].map(id => byId.get(id)).filter(Boolean);
   for (const project of studies.filter(project => project.featured && asset(project.hero))) if (featured.length < 5 && !featured.includes(project)) featured.push(project);
@@ -132,6 +142,7 @@
     selection = selected ? selection.filter(value => value !== id) : [...selection,id];
     updateSelection();
     if (button) { button.classList.remove('just-selected'); requestAnimationFrame(() => button.classList.add('just-selected')); }
+    track('project_selection',{project_id:id,industry:byId.get(id).sector,action:selected?'remove':'save',project_count:selection.length});
     toast(`${byId.get(id).title} ${selected ? 'removed from' : 'saved to'} your collection.`);
   }
   async function renderFeature(animate = false) {
@@ -200,6 +211,7 @@
       ${related.length ? `<section id="related-projects" class="related-projects"><div class="section-heading"><div><span class="eyebrow mono">CONTINUE EXPLORING</span><h2>Related experience.</h2></div></div><div class="related-grid">${related.map(renderCard).join('')}</div></section>` : ''}</div></article>`;
     $('home-page').hidden = true; document.body.classList.add('project-route');
     document.title = `${project.title} | NorthStar Project Experience`;
+    reportCase(project);
     document.querySelector('.skip-link').href = projectUrl(id) + '#project-overview';
     document.dispatchEvent(new CustomEvent('northstar:render')); return true;
   }
@@ -213,6 +225,8 @@
     if (push) history.pushState({},'', basePath + hash);
     $('home-page').hidden = false; $('project-page').innerHTML = ''; document.body.classList.remove('project-route'); current = null;
     document.title = 'Project Experience | NorthStar'; document.querySelector('.skip-link').href = '#library';
+    analyticsCase = null;
+    window.NorthStarAnalytics?.page({page_type:'case_library'});
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView(); else window.scrollTo({top:0,behavior:'instant'});
     const destination = (hash && document.getElementById(hash.slice(1))) || $('hero-heading');
     const heading = destination.matches('h1,h2,h3') ? destination : destination.querySelector('h1,h2,h3') || destination;
@@ -242,14 +256,14 @@
     $('saved-collections').innerHTML = '<option value="">Choose a saved selection</option>' + collections.map((item,index) => `<option value="${index}">${esc(item.name)} (${item.ids.length})</option>`).join('');
     $('delete-collection').hidden = true;
   }
-  function openPortfolio() { renderPortfolio(); renderCollections(); updateAudienceWarning(); showDialog($('portfolio-dialog'),'portfolio-title'); }
+  function openPortfolio() { renderPortfolio(); renderCollections(); updateAudienceWarning(); showDialog($('portfolio-dialog'),'portfolio-title'); track('portfolio_open',{project_count:selection.length}); }
   function exportProjects(items, options) {
     if (options.audience === 'client' && items.some(project => project.restricted)) { toast('Restricted projects require an internal edition. Review the sharing audience in Portfolio studio.'); return; }
     if (!window.NorthStarExport) { toast('The portfolio creator could not load. Refresh the page and try again.'); return; }
     $('export-button').disabled = true;
     try {
-      Promise.resolve(window.NorthStarExport.open(items,options)).then(result => { if (result) toast(`Your ${result.pages}-page collection is ready.`); }).catch(error => toast(error.message || 'Your collection could not be created. Please try again.')).finally(updateAudienceWarning);
-    } catch (error) { toast(error.message || 'Your collection could not be created. Please try again.'); updateAudienceWarning(); }
+      Promise.resolve(window.NorthStarExport.open(items,options)).then(result => { if (result) { toast(`Your ${result.pages}-page collection is ready.`); track('portfolio_created',{edition:options.edition,project_count:items.length,page_count:result.pages}); } }).catch(error => { track('portfolio_failed',{edition:options.edition,project_count:items.length}); toast(error.message || 'Your collection could not be created. Please try again.'); }).finally(updateAudienceWarning);
+    } catch (error) { track('portfolio_failed',{edition:options.edition,project_count:items.length}); toast(error.message || 'Your collection could not be created. Please try again.'); updateAudienceWarning(); }
   }
   document.addEventListener('click', event => {
     const link = event.target.closest('a');
@@ -265,6 +279,7 @@
     if (button.dataset.open) { openCase(button.dataset.open); return; }
     if (button.dataset.industry) {
       sector = button.dataset.industry; limit = 12;
+      track('industry_select',{industry:sector,placement:'case_industry_navigation'});
       $('search').value = ''; ['location-filter','event-filter','service-filter'].forEach(id => $(id).value = '');
       document.querySelectorAll('[data-sector]').forEach(tab => tab.setAttribute('aria-pressed',tab.dataset.sector === sector));
       render(); $('library').scrollIntoView(); $('library-heading').tabIndex = -1; $('library-heading').focus({preventScroll:true}); return;
@@ -276,6 +291,7 @@
     }
     if (button.hasAttribute('data-sector')) {
       sector = button.dataset.sector; limit = 12;
+      track('industry_select',{industry:sector || 'All industries',placement:'case_filter'});
       document.querySelectorAll('[data-sector]').forEach(tab => tab.setAttribute('aria-pressed', tab === button)); render(); return;
     }
     if (button.hasAttribute('data-feature')) { feature = Number(button.dataset.feature); renderFeature(true); return; }
@@ -303,8 +319,8 @@
   $('reset-filters').onclick = resetFilters; $('empty-reset').onclick = () => { resetFilters(); $('search').focus(); };
   $('load-more').onclick = () => { const oldLimit = limit; limit += 12; render(); const next = $('project-grid').querySelectorAll('.card-image-button')[oldLimit]; next?.focus({preventScroll:true}); };
   $('grid-view').onclick = () => { view = 'grid'; render(); persist(); }; $('list-view').onclick = () => { view = 'list'; render(); persist(); };
-  $('select-results').onclick = () => { selection = cleanIds([...selection,...filtered.map(project => project.id)]); updateSelection(); toast(`${filtered.length} matching projects selected.`); };
-  const clearSelection = () => { selection = []; updateSelection(); toast('Project selection cleared.'); };
+  $('select-results').onclick = () => { selection = cleanIds([...selection,...filtered.map(project => project.id)]); updateSelection(); track('project_selection',{action:'save_results',project_count:selection.length}); toast(`${filtered.length} matching projects selected.`); };
+  const clearSelection = () => { selection = []; updateSelection(); track('project_selection',{action:'clear',project_count:0}); toast('Project selection cleared.'); };
   $('clear-selection').onclick = () => { clearSelection(); document.querySelector('.portfolio-trigger').focus(); }; $('portfolio-clear').onclick = () => { clearSelection(); $('browse-from-portfolio').focus(); };
   $('feature-prev').onclick = () => { feature = (feature - 1 + featured.length) % featured.length; renderFeature(true); }; $('feature-next').onclick = () => { feature = (feature + 1) % featured.length; renderFeature(true); };
   $('close-case').onclick = () => $('case-dialog').close(); $('close-portfolio').onclick = () => $('portfolio-dialog').close(); $('close-lightbox').onclick = () => $('lightbox').close();
@@ -320,9 +336,10 @@
     const existing = collections.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
     const item = {name,ids:[...selection]}; if (existing >= 0) collections[existing] = item; else collections.push(item);
     persist(); renderCollections(); toast(`“${name}” saved in this browser.`);
+    track('collection_action',{action:'save',project_count:selection.length});
   };
-  $('saved-collections').onchange = () => { const index = $('saved-collections').value; $('delete-collection').hidden = index === ''; if (index !== '' && collections[Number(index)]) { selection = cleanIds(collections[Number(index)].ids); $('collection-name').value = collections[Number(index)].name; updateSelection(); toast('Saved selection loaded.'); } };
-  $('delete-collection').onclick = () => { const index = Number($('saved-collections').value); if ($('saved-collections').value !== '' && collections[index]) { collections.splice(index,1); persist(); renderCollections(); toast('Saved selection deleted.'); } };
+  $('saved-collections').onchange = () => { const index = $('saved-collections').value; $('delete-collection').hidden = index === ''; if (index !== '' && collections[Number(index)]) { selection = cleanIds(collections[Number(index)].ids); $('collection-name').value = collections[Number(index)].name; updateSelection(); track('collection_action',{action:'load',project_count:selection.length}); toast('Saved selection loaded.'); } };
+  $('delete-collection').onclick = () => { const index = Number($('saved-collections').value); if ($('saved-collections').value !== '' && collections[index]) { collections.splice(index,1); persist(); renderCollections(); track('collection_action',{action:'delete'}); toast('Saved selection deleted.'); } };
   document.addEventListener('keydown',event => { if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !/input|textarea|select/i.test(event.target.tagName) && !document.querySelector('dialog[open]')) { event.preventDefault(); if (document.body.classList.contains('project-route')) navigateHome('#library'); $('search').focus(); $('library').scrollIntoView(); } });
   function readRoute() {
     const relativePath = location.pathname.startsWith(basePath) ? location.pathname.slice(basePath.length) : '';

@@ -19,5 +19,5 @@
   scalePages();
   document.body.classList.add('document-enhanced');
   window.addEventListener('resize', scalePages, {passive:true});
-  document.querySelector('.print-action')?.addEventListener('click', () => window.print());
+  document.querySelector('.print-action')?.addEventListener('click', () => { window.NorthStarAnalytics?.track('print_requested',{page_type:'material',method:'print'}); window.print(); });
 })();

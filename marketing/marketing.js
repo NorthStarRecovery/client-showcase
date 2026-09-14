@@ -55,6 +55,7 @@
     clear.hidden = !filtered;
     empty.hidden = visible > 0;
     showIndustry(category);
+    window.NorthStarAnalytics?.page({page_type:'marketing',industry:category || 'All industries'});
     if (updateUrl) {
       const url = new URL(location.href);
       if (search.value.trim()) url.searchParams.set('q', search.value.trim()); else url.searchParams.delete('q');
@@ -72,13 +73,14 @@
     search.focus();
   }
   search.addEventListener('input', () => filter());
-  categorySelect.addEventListener('change', () => filter());
+  categorySelect.addEventListener('change', () => { filter(); window.NorthStarAnalytics?.track('industry_select',{industry:categorySelect.value || 'All industries',placement:'category_filter'}); });
   formatSelect.addEventListener('change', () => filter());
   focusSelect.addEventListener('change', () => {
     categorySelect.value = focusSelect.value;
     formatSelect.value = '';
     search.value = '';
     filter('push', 'industry-focus');
+    window.NorthStarAnalytics?.track('industry_select',{industry:focusSelect.value,placement:'industry_focus'});
   });
   categoryLinks.forEach(link => link.addEventListener('click', event => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -88,6 +90,7 @@
     search.value = '';
     const industry = scenes.some(scene => scene.dataset.industry === link.dataset.jumpCategory);
     filter('push', industry ? 'industry-focus' : 'materials');
+    window.NorthStarAnalytics?.track('industry_select',{industry:link.dataset.jumpCategory,placement:'industry_navigation'});
     document.querySelector(industry ? '#industry-focus' : '#materials').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
     (industry ? currentScene.querySelector('h2') : search).focus({ preventScroll: true });
   }));
