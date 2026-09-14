@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071B2C">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="NorthStar team tools for campaign links and browser classification.">
+  <title>Team tools | NorthStar</title>
+  <link rel="icon" href="assets/brand/v2-symbol-blue.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="team-tools.css">
+  <link rel="stylesheet" href="analytics.css">
+  <script src="analytics-config.js" defer></script>
+  <script src="analytics.js" defer></script>
+  <script src="team-tools.js" defer></script>
+</head>
+<body>
+  <a class="tt-skip" href="#main">Skip to team tools</a>
+  <header class="tt-header">
+    <a class="tt-brand" href="./" aria-label="NorthStar Client Showcase home"><img src="assets/brand/v2-symbol-white.svg" alt=""><span>NorthStar<small>We Bring Answers.</small></span></a>
+    <a class="tt-return" href="./">Open Client Showcase <i class="tt-arrow" aria-hidden="true"></i></a>
+  </header>
+  <main id="main" class="tt-main">
+    <div class="tt-intro">
+      <p class="tt-label">CLIENT SHOWCASE / TEAM TOOLS</p>
+      <h1>Make every<br>shared link count.</h1>
+      <p>Create consistent campaign links and distinguish staff activity in reporting. Bookmark this page for your next email, post or event.</p>
+    </div>
+    <div class="tt-layout">
+      <section class="tt-builder" aria-labelledby="tt-builder-title">
+        <div class="tt-section-heading"><span class="tt-step" aria-hidden="true">01</span><div><h2 id="tt-builder-title">Build a campaign link</h2><p>Choose the content and where you plan to share it.</p></div></div>
+        <noscript><p class="tt-notice">Turn on JavaScript to create campaign links and change this browser's classification.</p></noscript>
+        <form id="tt-form">
+          <fieldset id="tt-link-fields" disabled>
+            <legend class="tt-sr-only">Campaign details</legend>
+            <label class="tt-field" for="tt-destination"><span>Send people to</span><select id="tt-destination" required><option value="">Loading destinations…</option></select></label>
+            <div class="tt-field-row">
+              <label class="tt-field" for="tt-channel"><span>Share through</span><select id="tt-channel" required></select></label>
+              <label class="tt-field" for="tt-campaign"><span>Campaign</span><select id="tt-campaign" required></select></label>
+            </div>
+          </fieldset>
+          <div class="tt-result">
+            <label class="tt-label" for="tt-link">YOUR SHAREABLE LINK</label>
+            <textarea id="tt-link" rows="4" readonly spellcheck="false" aria-describedby="tt-link-help"></textarea>
+            <div class="tt-actions"><button id="tt-copy" class="tt-button" type="button" disabled>Copy campaign link</button><a id="tt-preview" class="tt-preview" target="_blank" rel="noopener noreferrer" aria-disabled="true" tabindex="-1">Preview destination <i class="tt-arrow" aria-hidden="true"></i><span class="tt-sr-only">, opens in a new tab</span></a></div>
+            <p id="tt-link-status" class="tt-status" role="status" aria-live="polite">Loading the approved campaign settings.</p>
+          </div>
+        </form>
+        <p id="tt-link-help" class="tt-help">Use the copied link in your email, post, event material or QR code. Material links open the online edition, where visits and PDF download clicks can be measured.</p>
+        <details class="tt-details"><summary>How the labels work</summary><p>The source and medium describe where a visit came from. The campaign groups related outreach. These labels use approved values so reports stay consistent. They do not include recipient names or email addresses.</p><p>Changing the destination suggests a matching campaign. You can choose another campaign before copying. Previewing a link can create a measured visit; mark your browser as staff to distinguish your own activity.</p></details>
+      </section>
+      <aside class="tt-side">
+        <section class="tt-audience" aria-labelledby="tt-audience-title">
+          <div class="tt-section-heading"><span class="tt-step" aria-hidden="true">02</span><div><h2 id="tt-audience-title">Identify staff activity</h2></div></div>
+          <p>Mark this browser when you use the showcase for NorthStar work. Staff activity stays available in reports and can be separated from unclassified visits.</p>
+          <div class="tt-browser-state"><span class="tt-label">THIS BROWSER</span><strong id="tt-audience-state">Checking…</strong></div>
+          <div class="tt-audience-actions"><button id="tt-mark-staff" class="tt-button tt-button-outline" type="button" disabled>Mark this browser as staff</button><button id="tt-unmark-staff" class="tt-text-button" type="button" disabled>Return to unclassified</button></div>
+          <p id="tt-audience-status" class="tt-status" role="status" aria-live="polite"></p>
+          <p class="tt-help">This is a browser label, not a login or proof of identity. It applies to future activity in this browser only. Set it on each browser you use; clearing site data removes it.</p>
+        </section>
+        <section class="tt-reading-note" aria-labelledby="tt-reading-title"><p class="tt-label">READ THE SIGNAL CORRECTLY</p><h2 id="tt-reading-title">Interest is a starting point.</h2><p>A visit or download click helps you understand content interest. It does not identify the visitor by name or confirm that a file was saved or read.</p></section>
+      </aside>
+    </div>
+  </main>
+  <footer class="tt-footer"><span>NorthStar · We Bring Answers.</span><a href="privacy.html">Privacy and analytics</a></footer>
+</body>
+</html>

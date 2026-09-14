@@ -5,10 +5,12 @@
   const measurementId = typeof config.measurementId === 'string' ? config.measurementId : '';
   const base = typeof config.publicBasePath === 'string' ? config.publicBasePath : '';
   const campaignKey = 'northstar.analytics.campaign.v1';
+  const audienceKey = 'northstar.analytics.audience.v1';
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const events = new Set(['page_view', 'case_view', 'industry_select', 'material_view', 'file_download',
     'contact_click', 'project_selection', 'collection_action', 'portfolio_open', 'portfolio_created',
-    'portfolio_failed', 'portfolio_download', 'print_requested']);
+    'portfolio_failed', 'portfolio_download', 'print_requested', 'content_engagement', 'content_depth',
+    'story_expand', 'image_enlarge']);
   const ids = new Set(['project_id', 'material_id', 'bundle_id']);
   const counters = new Set(['project_count', 'page_count']);
   const strings = new Set(['page_type', 'industry', 'file_name', 'file_extension', 'placement', 'method', 'action', 'edition']);
@@ -33,7 +35,8 @@
   });
   const bundles = new Set(['northstar-industry-collection', 'northstar-marketing-collection']);
   const noOp = () => false;
-  window.NorthStarAnalytics = Object.freeze({ track: noOp, page: noOp, openSettings: noOp });
+  window.NorthStarAnalytics = Object.freeze({ track: noOp, page: noOp, openSettings: noOp,
+    setAudience: noOp, getAudience: () => 'unclassified' });
 
   function eligible() {
     return /^G-[A-Z0-9]{4,20}$/.test(measurementId) && /^\/[a-z0-9-]+\/$/.test(base)
@@ -51,6 +54,10 @@
   let lastMaterial = '';
   let currentPage = {};
   let campaign = {};
+  let audience = storageGet('localStorage', audienceKey) === 'staff' ? 'staff' : 'unclassified';
+  let engagement = null;
+  let focused = document.hasFocus();
+  let lastActivity = performance.now();
   const disabledKey = `ga-disable-${measurementId}`;
   const campaignFields = [['campaign_source', 'utm_source', config.campaignSources],
     ['campaign_medium', 'utm_medium', config.campaignMediums], ['campaign_name', 'utm_campaign', config.campaignNames]];
@@ -63,6 +70,14 @@
   function storageSet(kind, key, value) {
     try { window[kind].setItem(key, value); return true; } catch { return false; }
   }
+  function getAudience() { return audience; }
+  function setAudience(value) {
+    if (!['staff', 'unclassified'].includes(value)) return false;
+    if (!storageSet('localStorage', audienceKey, value) || storageGet('localStorage', audienceKey) !== value) return false;
+    audience = value;
+    if (initialized && !failed) gtag('set', { traffic_audience: audience });
+    return true;
+  }
   function normalizeSlug(value) {
     if (typeof value !== 'string' || value.length > 80) return '';
     return slug.test(value) ? value : '';
@@ -72,6 +87,8 @@
     if (!input || typeof input !== 'object') return result;
     for (const [key, value] of Object.entries(input)) {
       if (counters.has(key) && Number.isInteger(value) && value >= 0 && value <= 1000) result[key] = value;
+      if (key === 'active_seconds' && [30, 60, 120].includes(value)) result[key] = value;
+      if (key === 'percent_scrolled' && [50, 90].includes(value)) result[key] = value;
       if (ids.has(key) && normalizeSlug(value)) result[key] = value;
       if (!strings.has(key) || typeof value !== 'string' || value.length > 80) continue;
       if (key === 'industry') {
@@ -104,6 +121,7 @@
       return { page_type: 'marketing', industry };
     }
     if (path === 'privacy.html') return { page_type: 'privacy' };
+    if (path === 'team-tools.html') return { page_type: 'team_tools' };
     const material = path.match(/^marketing\/([a-z0-9-]+)\.html$/)?.[1];
     if (material && Object.hasOwn(materialIndustries, material)) {
       return { page_type: 'material', material_id: material, industry: materialIndustries[material],
@@ -120,7 +138,7 @@
   function pageTitle() {
     const labels = { home: 'Project experience', marketing: 'Marketing materials', material: 'Marketing material',
       privacy: 'Privacy and analytics', case: 'Case study', case_study: 'Case study', case_library: 'Project experience',
-      project: 'Case study', showcase: 'Client showcase' };
+      project: 'Case study', showcase: 'Client showcase', team_tools: 'Team tools' };
     return `${labels[currentPage.page_type] || 'Client showcase'} | NorthStar`;
   }
   function pageParameters() {
@@ -165,16 +183,17 @@
     if (!initialized || failed || !eligible() || window[disabledKey]) return false;
     // Reassert clean defaults for GA-generated session/engagement events after SPA navigation.
     const page = pageParameters();
-    gtag('set', page);
+    gtag('set', { ...page, traffic_audience: audience });
     storageSet('sessionStorage', campaignKey, JSON.stringify({ version: 1, savedAt: Date.now(), values: campaign }));
-    gtag('event', name, { ...safeProperties(properties), ...page, send_to: measurementId });
+    gtag('event', name, { ...safeProperties(properties), ...page, traffic_audience: audience, send_to: measurementId });
     return true;
   }
   function track(name, properties) {
     if (!events.has(name)) return false;
     if (name === 'page_view') return page(properties);
     let context = {};
-    if (name === 'contact_click' || (name === 'print_requested' && currentPage.page_type === 'material')) {
+    if (['contact_click', 'content_engagement', 'content_depth', 'story_expand', 'image_enlarge'].includes(name)
+      || (name === 'print_requested' && currentPage.page_type === 'material')) {
       context = safeProperties({ page_type: currentPage.page_type, industry: currentPage.industry,
         project_id: currentPage.project_id, material_id: currentPage.material_id, edition: currentPage.edition });
     }
@@ -188,6 +207,7 @@
     if (lastPage === path) return false;
     if (!send('page_view', currentPage)) return false;
     lastPage = path;
+    resetEngagement();
     if (currentPage.material_id && lastMaterial !== currentPage.material_id) {
       send('material_view', currentPage);
       lastMaterial = currentPage.material_id;
@@ -202,7 +222,7 @@
     window.dataLayer = window.dataLayer || [];
     gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied',
       ad_user_data: 'denied', ad_personalization: 'denied' });
-    gtag('set', { ...pageParameters(), allow_google_signals: false, allow_ad_personalization_signals: false,
+    gtag('set', { ...pageParameters(), traffic_audience: audience, allow_google_signals: false, allow_ad_personalization_signals: false,
       ads_data_redaction: true, url_passthrough: false });
     gtag('js', new Date());
     gtag('config', measurementId, { ...pageParameters(), campaign_source: '', campaign_medium: '', campaign_name: '',
@@ -245,6 +265,83 @@
       track('contact_click', { method: url.protocol === 'tel:' ? 'phone' : 'website', placement });
     }
   }
+  function contentElement() {
+    if (currentPage.page_type === 'case_study') return document.querySelector('#project-page .project-narrative');
+    if (currentPage.page_type === 'material') return document.querySelector('main');
+    return null;
+  }
+  function resetEngagement() {
+    const now = performance.now();
+    engagement = ['case_study', 'material'].includes(currentPage.page_type)
+      ? { activeMs: 0, tick: now, times: new Set(), depths: new Set(), scrolled: false, scrollY: window.scrollY, ready: false }
+      : null;
+    lastActivity = now;
+    // Let route focus and initial scroll restoration finish before treating movement as content exploration.
+    const view = engagement;
+    requestAnimationFrame(() => {
+      if (view && view === engagement) { view.scrollY = window.scrollY; view.ready = true; }
+    });
+  }
+  function foreground() {
+    return document.visibilityState === 'visible' && focused && !document.querySelector('dialog[open]');
+  }
+  function measureTime() {
+    if (!engagement) return;
+    const now = performance.now();
+    const elapsed = now - engagement.tick;
+    // Background throttling or a sleeping computer must not become active reading time.
+    if (foreground() && contentElement() && elapsed >= 0 && elapsed <= 5000) {
+      const activeEnd = Math.min(now, lastActivity + 60000);
+      engagement.activeMs += Math.max(0, activeEnd - engagement.tick);
+      for (const seconds of [30, 60, 120]) {
+        if (engagement.activeMs >= seconds * 1000 && !engagement.times.has(seconds)) {
+          if (track('content_engagement', { active_seconds: seconds })) engagement.times.add(seconds);
+        }
+      }
+    }
+    engagement.tick = now;
+  }
+  function measureDepth() {
+    if (!engagement?.ready || !engagement.scrolled || !foreground()) return;
+    const content = contentElement();
+    if (!content) return;
+    const rect = content.getBoundingClientRect();
+    if (rect.height <= 0 || rect.top >= innerHeight || rect.bottom <= 0) return;
+    const visibleDepth = Math.min(100, Math.max(0, (innerHeight - rect.top) / rect.height * 100));
+    for (const percent of [50, 90]) {
+      if (visibleDepth >= percent && !engagement.depths.has(percent)) {
+        if (track('content_depth', { percent_scrolled: percent })) engagement.depths.add(percent);
+      }
+    }
+  }
+  function activity() {
+    measureTime();
+    lastActivity = performance.now();
+  }
+  function observeEngagement() {
+    window.setInterval(measureTime, 1000);
+    document.addEventListener('visibilitychange', () => {
+      if (engagement) engagement.tick = performance.now();
+    });
+    window.addEventListener('blur', () => { measureTime(); focused = false; });
+    window.addEventListener('focus', () => {
+      focused = true;
+      if (engagement) engagement.tick = performance.now();
+      lastActivity = performance.now();
+    });
+    for (const name of ['pointerdown', 'keydown', 'touchstart']) document.addEventListener(name, activity, { passive: true });
+    window.addEventListener('scroll', () => {
+      activity();
+      if (engagement?.ready && engagement.scrollY !== window.scrollY) engagement.scrolled = true;
+      if (engagement) engagement.scrollY = window.scrollY;
+      measureDepth();
+    }, { passive: true });
+    window.addEventListener('storage', event => {
+      if (event.key !== audienceKey && event.key !== null) return;
+      audience = storageGet('localStorage', audienceKey) === 'staff' ? 'staff' : 'unclassified';
+      if (initialized && !failed) gtag('set', { traffic_audience: audience });
+    });
+  }
   function mount() {
     if (!eligible()) return;
     const utility = document.createElement('nav');
@@ -259,8 +356,9 @@
     document.addEventListener('auxclick', delegatedClick);
     currentPage = { ...inferredPage(), ...currentPage };
     initialize();
+    observeEngagement();
   }
-  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings: noOp });
+  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings: noOp, setAudience, getAudience });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
   else mount();
 })();

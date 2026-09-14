@@ -309,10 +309,18 @@
       if (remaining.length) remaining[Math.min(index,remaining.length-1)].focus(); else $('browse-from-portfolio').focus(); return;
     }
     if (button.dataset.photo && asset(button.dataset.photo)) {
-      $('lightbox-image').src = button.dataset.photo; $('lightbox-image').alt = button.dataset.caption || byId.get(current)?.title || 'Project photograph'; $('lightbox-caption').textContent = displayCaption($('lightbox-image').alt); showDialog($('lightbox')); return;
+      $('lightbox-image').src = button.dataset.photo; $('lightbox-image').alt = button.dataset.caption || byId.get(current)?.title || 'Project photograph'; $('lightbox-caption').textContent = displayCaption($('lightbox-image').alt); showDialog($('lightbox'));
+      const project = byId.get(current);
+      if (project) track('image_enlarge', {project_id:project.id,industry:project.sector,placement:button.closest('.project-photo-grid,.detail-gallery') ? 'project-gallery' : 'project-illustration'});
+      return;
     }
     if (button.dataset.exportOne) { const project = byId.get(button.dataset.exportOne); if (project) { if (project.restricted && $('export-audience').value === 'client') { if (!selection.includes(project.id)) selection.push(project.id); updateSelection(); openPortfolio(); return; } exportProjects([project],exportOptions({title:project.title,subtitle:'NorthStar project experience'})); } }
   });
+  document.addEventListener('toggle', event => {
+    if (!event.target.matches?.('#project-page details.full-story') || !event.target.open) return;
+    const project = byId.get(current);
+    if (project) track('story_expand', {project_id:project.id,industry:project.sector});
+  }, true);
   $('search').addEventListener('input',() => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { limit = 12; render(); },100); });
   ['location-filter','event-filter','service-filter','sort'].forEach(id => $(id).addEventListener('change',() => { limit = 12; render(); }));
   $('filter-toggle').onclick = () => { const expanded = $('filter-toggle').getAttribute('aria-expanded') !== 'true'; $('filter-toggle').setAttribute('aria-expanded',expanded); $('advanced-filters').hidden = !expanded; };
