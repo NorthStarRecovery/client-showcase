@@ -6,7 +6,7 @@ window.NORTHSTAR_ANALYTICS_CONFIG = Object.freeze({
   campaignSources: Object.freeze(['linkedin', 'email', 'newsletter', 'qr', 'northstar', 'website', 'event']),
   campaignMediums: Object.freeze(['social', 'email', 'qr', 'referral', 'print', 'organic', 'event']),
   campaignNames: Object.freeze([
-    'client-showcase', 'industry-collection', 'marketing-collection', 'premier-response',
+    'client-showcase', 'industry-collection', 'marketing-collection', 'premier-response', 'emergency-response-request',
     'manufacturing', 'industrial', 'commercial-real-estate', 'medical', 'education', 'technology',
     'manufacturing-overview', 'manufacturing-brief', 'industrial-overview', 'industrial-brief',
     'commercial-real-estate-overview', 'commercial-real-estate-brief', 'medical-overview',

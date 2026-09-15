@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Request NorthStar emergency response at 1-800-283-2933. A one-page guide to the information to share and support available for property recovery.">
+  <title>Emergency response request | NorthStar</title>
+  <link rel="stylesheet" href="print.css">
+  <link rel="stylesheet" href="../analytics.css">
+  <script src="../analytics-config.js" defer></script>
+  <script src="../analytics.js" defer></script>
+  <style>
+    .er-page{font-variant-numeric:tabular-nums}
+    .er-top{height:450px;background:#071B2C;color:#fff}
+    .er-header{height:90px;padding:30px 44px 20px;display:flex;align-items:center;justify-content:space-between}
+    .er-header .brand{font-size:28px}.er-header .brand img{width:42px;height:42px}
+    .er-header .brand small{color:#B9D3F5}
+    .er-availability{text-align:right;font-family:Plex,monospace;font-size:11px;line-height:1.7;letter-spacing:.08em;color:#B9D3F5;text-transform:uppercase}
+    .er-availability strong{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 112;font-size:27px;letter-spacing:-.02em;color:white;display:block;line-height:1.1}
+    .er-hero{height:220px;display:grid;grid-template-columns:448px 1fr}
+    .er-copy{padding:14px 18px 0 44px}.er-copy .mono{font-size:10px;color:#8FB8FF;letter-spacing:.11em}
+    .er-copy h1{margin-top:15px;font-size:53px;line-height:1.02;letter-spacing:-.045em;font-variation-settings:'wdth' 112}
+    .er-copy h1 span{display:block;color:#6EABFF}
+    .er-deck{font-size:17px;line-height:1.4;color:#B9D3F5;margin-top:15px;max-width:363px}
+    .er-art{margin:12px 0 0;height:208px;overflow:hidden}.er-art img{width:100%;height:100%;object-fit:cover;object-position:57% 57%}
+    .er-call{height:140px;margin:0 44px;border-top:2px solid #2F86FF;padding-top:15px;position:relative}
+    .er-call:before{content:'';position:absolute;left:0;top:-2px;width:62px;height:2px;background:#D2691E}
+    .er-call-label{display:flex;align-items:center;gap:9px;color:#B9D3F5;font-size:11px}.er-call-label .ns-icon{width:19px;height:19px}
+    .er-number{display:block;width:max-content;max-width:100%;font-family:Archivo,sans-serif;font-weight:650;font-variation-settings:'wdth' 105;font-size:65px;line-height:1.17;letter-spacing:-.035em;white-space:nowrap}
+    .er-call-note{font-size:16px;color:#B9D3F5;line-height:1.25}
+    .er-checklist{padding:26px 44px 0}
+    .er-section-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .er-section-heading h2{font-size:27px;font-variation-settings:'wdth' 108;letter-spacing:-.025em}
+    .er-section-heading .mono{font-size:10px;color:#104C8E;white-space:nowrap}
+    .er-details{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:14px;margin:17px 0 0;padding:0;list-style:none}
+    .er-details li{display:grid;grid-template-columns:26px 1fr;gap:7px;border-top:1px solid #C6D1DE;padding-top:10px}
+    .er-step{font-family:Plex,monospace;font-size:11px;color:#104C8E;padding-top:3px}
+    .er-details h3{font-size:18px;letter-spacing:-.02em;font-variation-settings:'wdth' 105;margin:0 0 5px}
+    .er-details p{font-size:16px;line-height:1.32;color:#54626F}
+    .er-services{padding:20px 44px 0}
+    .er-service-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin-top:14px}
+    .er-service-grid article{border-top:1px solid #C6D1DE;padding-top:10px}
+    .er-service-grid h3{display:flex;align-items:center;gap:9px;font-size:18px;letter-spacing:-.02em;font-variation-settings:'wdth' 105;margin:0 0 6px}
+    .er-service-grid .ns-icon{width:21px;height:21px;color:#104C8E}
+    .er-service-grid p{font-size:16px;line-height:1.32;color:#54626F}
+    .er-next{margin:18px 44px 0;padding-top:14px;border-top:2px solid #104C8E;display:grid;grid-template-columns:132px 1fr;gap:16px}
+    .er-next h2{font-size:19px;line-height:1.15;font-variation-settings:'wdth' 105;letter-spacing:-.02em}
+    .er-next p{font-size:16px;line-height:1.35;color:#54626F}
+    .er-footer{position:absolute;bottom:0;left:44px;right:44px;height:41px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #C6D1DE;font-family:Plex,monospace;font-size:10px;color:#54626F}
+    .er-footer a{color:#104C8E}
+    .er-page a:focus-visible{outline:3px solid #2F86FF;outline-offset:5px}.er-number:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px}.er-footer a:hover{text-decoration:underline}
+    @media screen and (max-width:840px){
+      .er-page{zoom:1;width:100%;height:auto;margin:0;overflow:visible}.er-top{height:auto;padding-bottom:22px}.er-header{height:auto;min-height:90px;padding:25px 24px}.er-hero{height:auto;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}.er-copy{padding:14px 16px 22px 24px}.er-copy h1{font-size:clamp(36px,6.3vw,53px)}.er-deck{max-width:none}.er-art{height:100%;min-height:225px;margin:0}.er-call{height:auto;margin:0 24px;padding-top:18px}.er-number{font-size:clamp(35px,8vw,65px)}.er-call-note{margin-top:4px}.er-checklist,.er-services{padding:28px 24px 0}.er-next{margin:26px 24px 0}.er-footer{position:static;margin:25px 24px 0;height:auto;min-height:60px;gap:20px;flex-wrap:wrap;padding:16px 0}
+    }
+    @media screen and (max-width:540px){
+      .screen-tools{gap:8px;padding:12px}.screen-tools a{padding:10px 12px;font-size:14px}.er-header .brand{font-size:25px}.er-header .brand img{width:33px;height:33px}.er-availability{font-size:9px}.er-availability strong{font-size:24px}.er-hero{display:flex;flex-direction:column}.er-copy{padding:14px 24px 22px}.er-copy h1{font-size:49px}.er-deck{max-width:380px}.er-art{height:180px;min-height:0;margin:0 24px 24px}.er-art img{object-position:50% 57%}.er-number{font-size:clamp(31px,8.7vw,46px);line-height:1.5}.er-section-heading{display:block}.er-section-heading .mono{display:block;margin-top:8px}.er-details,.er-service-grid{grid-template-columns:1fr;gap:17px}.er-details h3,.er-service-grid h3{font-size:20px}.er-next{grid-template-columns:1fr;gap:10px}.er-footer{gap:10px}.er-checklist,.er-services{padding-top:30px}
+    }
+    @media (prefers-reduced-motion:no-preference){@media screen{.er-page{animation:er-reveal 220ms ease-out both}@keyframes er-reveal{from{opacity:.35}to{opacity:1}}}}
+  </style>
+</head>
+<body>
+  <nav class="screen-tools" aria-label="Document actions"><a href="./">All marketing materials</a><a href="downloads/emergency-response-request.pdf" download>Download PDF</a><a href="tel:+18002832933">Call NorthStar</a></nav>
+  <main>
+    <article class="page er-page" aria-label="NorthStar emergency response request flyer">
+      <div class="er-top">
+        <header class="er-header">
+          <div class="brand"><img src="../assets/brand/v2-symbol-white.svg" alt=""><span>NorthStar<small>We Bring Answers.</small></span></div>
+          <p class="er-availability"><strong>24/7</strong>Emergency response</p>
+        </header>
+        <div class="er-hero">
+          <div class="er-copy"><p class="mono">Emergency response / Request guide</p><h1>Property loss.<span>Start here.</span></h1><p class="er-deck">Connect your property team with NorthStar for emergency support and recovery.</p></div>
+          <figure class="er-art"><img src="../assets/marketing/emergency-response-request.jpg" alt="Architectural illustration of a commercial campus with glass-fronted buildings and connecting courtyards" width="1536" height="1024"></figure>
+        </div>
+        <section class="er-call" aria-label="Request emergency response">
+          <p class="mono er-call-label"><i class="ns-icon ns-phone-call" aria-hidden="true"></i>Request emergency response</p>
+          <a class="er-number" href="tel:+18002832933">1-800-283-2933</a>
+          <p class="er-call-note">Save this number in your site response plan.</p>
+        </section>
+      </div>
+      <section class="er-checklist" aria-labelledby="er-details-title">
+        <div class="er-section-heading"><h2 id="er-details-title">Make the first call count.</h2><span class="mono">Details to have ready</span></div>
+        <ol class="er-details">
+          <li><span class="er-step" aria-hidden="true">01</span><div><h3>Site &amp; contacts</h3><p>Property name, full address, and caller and on-site contact phone numbers.</p></div></li>
+          <li><span class="er-step" aria-hidden="true">02</span><div><h3>Loss &amp; conditions</h3><p>What happened, affected areas or systems, and current site conditions.</p></div></li>
+          <li><span class="er-step" aria-hidden="true">03</span><div><h3>Authority &amp; access</h3><p>Authorized representative, entry instructions and work order, if available.</p></div></li>
+          <li><span class="er-step" aria-hidden="true">04</span><div><h3>Immediate priorities</h3><p>Response needs. For temporary power, critical systems and connection details.</p></div></li>
+        </ol>
+      </section>
+      <section class="er-services" aria-labelledby="er-services-title">
+        <div class="er-section-heading"><h2 id="er-services-title">Support across the loss.</h2><span class="mono">NorthStar capabilities</span></div>
+        <div class="er-service-grid">
+          <article><h3><i class="ns-icon ns-layers-3" aria-hidden="true"></i>Temporary power &amp; climate</h3><p>Mobile power generation, heating, cooling and temporary lighting.</p></article>
+          <article><h3><i class="ns-icon ns-droplets" aria-hidden="true"></i>Water, fire &amp; contents</h3><p>Water extraction, structural drying, fire restoration and contents protection.</p></article>
+          <article><h3><i class="ns-icon ns-leaf" aria-hidden="true"></i>Environmental response</h3><p>Biological and chemical remediation, asbestos and lead abatement.</p></article>
+          <article><h3><i class="ns-icon ns-building-2" aria-hidden="true"></i>Property recovery</h3><p>Damage assessment, storm cleanup, demolition and reconstruction.</p></article>
+        </div>
+      </section>
+      <section class="er-next" aria-labelledby="er-next-title"><h2 id="er-next-title">What happens next.</h2><p>Operations coordinates the response. On site, NorthStar assesses the loss and plans mitigation with your authorized representative.</p></section>
+      <footer class="er-footer"><span>NorthStar Recovery Services</span><a href="https://recovery.northstar.com/">recovery.northstar.com</a></footer>
+    </article>
+  </main>
+</body>
+</html>

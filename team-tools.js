@@ -24,6 +24,7 @@
     ['hospitality-capital-renewal', 'Hospitality capital renewal'],
     ['national-recovery-capabilities', 'National recovery capabilities'],
     ['emergency-activation-guide', 'Emergency activation guide'],
+    ['emergency-response-request', 'Emergency response request'],
     ['premier-response-program', 'Premier Response program'],
     ['premier-response-journey', 'Premier Response journey'],
     ...industries.flatMap(([id, title]) => ['overview', 'brief'].map(edition =>

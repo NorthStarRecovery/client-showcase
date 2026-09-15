@@ -27,7 +27,8 @@
   const materialIndustries = {
     'hospitality-readiness': 'Hospitality', 'hospitality-recovery': 'Hospitality',
     'hospitality-capital-renewal': 'Hospitality', 'national-recovery-capabilities': 'Recovery services',
-    'emergency-activation-guide': 'Recovery services', 'premier-response-program': 'Premier Response',
+    'emergency-activation-guide': 'Recovery services', 'emergency-response-request': 'Recovery services',
+    'premier-response-program': 'Premier Response',
     'premier-response-journey': 'Premier Response'
   };
   ['manufacturing', 'industrial', 'commercial-real-estate', 'medical', 'education', 'technology'].forEach(id => {
