@@ -1,5 +1,5 @@
-import { createLibraryClient, libraryConfig, PUBLIC_FIELDS } from './library-client.js';
-import { processMaterial } from './material-processing.js';
+import { createLibraryClient, libraryConfig, PUBLIC_FIELDS } from './library-client.js?v=282175e8d23f';
+import { processMaterial } from './material-processing.js?v=282175e8d23f';
 
 const el = Object.fromEntries([...document.querySelectorAll('[id^="up-"]')].map(node => [node.id.slice(3), node]));
 const state = { client: null, user: null, material: null, preview: null, abort: null, selection: 0, authCheck: 0, busy: false, managing: false, activation: null };
