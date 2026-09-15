@@ -10,10 +10,11 @@
   const events = new Set(['page_view', 'case_view', 'industry_select', 'material_view', 'file_download',
     'contact_click', 'project_selection', 'collection_action', 'portfolio_open', 'portfolio_created',
     'portfolio_failed', 'portfolio_download', 'print_requested', 'content_engagement', 'content_depth',
-    'story_expand', 'image_enlarge']);
+    'story_expand', 'image_enlarge', 'search_results', 'search_zero_results']);
   const ids = new Set(['project_id', 'material_id', 'bundle_id']);
-  const counters = new Set(['project_count', 'page_count']);
-  const strings = new Set(['page_type', 'industry', 'file_name', 'file_extension', 'placement', 'method', 'action', 'edition']);
+  const counters = new Set(['project_count', 'page_count', 'result_count']);
+  const strings = new Set(['page_type', 'industry', 'file_name', 'file_extension', 'placement', 'method', 'action', 'edition', 'topic_category']);
+  const searchTopics = new Set(['healthcare','industrial','commercial','hospitality','education','hurricane','fire','water','demolition','abatement','recovery','other','industry','all']);
   const slug = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
   const industries = new Map([
     ['manufacturing', 'Manufacturing'], ['industrial', 'Industrial'],
@@ -92,7 +93,9 @@
       if (key === 'percent_scrolled' && [50, 90].includes(value)) result[key] = value;
       if (ids.has(key) && normalizeSlug(value)) result[key] = value;
       if (!strings.has(key) || typeof value !== 'string' || value.length > 80) continue;
-      if (key === 'industry') {
+      if (key === 'topic_category') {
+        if (searchTopics.has(value)) result[key] = value;
+      } else if (key === 'industry') {
         const known = industries.get(value.toLowerCase().replace(/ /g, '-'));
         if (known) result[key] = known;
       } else if (key === 'file_name') {

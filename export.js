@@ -3,6 +3,8 @@
   'use strict';
   const activeScript = document.currentScript;
   const base = new URL('.', activeScript && activeScript.src ? activeScript.src : location.href);
+  // A downloaded portfolio must never send its recipient back to the author's preview server.
+  const publicationBase = ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname) || base.protocol === 'file:' ? new URL('https://northstarrecovery.github.io/client-showcase/') : base;
   const cache = new Map();
   const defaults = { title: 'Selected\nexperience.', subtitle: 'A selection of NorthStar projects.', logo: 'assets/brand/v2-symbol-blue.svg', edition: 'executive', audience: 'client', introduction: '', contactName: 'NorthStar', contactEmail: 'contact@northstar.com', contactUrl: 'https://www.northstar.com/contact-us/' };
   const escape = value => String(value == null ? '' : value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
@@ -88,6 +90,38 @@
   function header(logo, label, restricted) { return '<header class="page-header">' + logoMarkup(logo) + '<div class="page-header-label">' + escape(label) + (restricted ? '<span class="confidential">Restricted / Internal use only</span>' : '') + '</div></header>'; }
   function footer(label) { return '<footer class="page-footer"><span class="page-footer-title">' + escape(label) + '</span><span class="page-number"></span></footer>'; }
   function page(className, content, id) { return '<div class="page-wrap"><section class="page ' + className + '"' + (id ? ' id="' + id + '"' : '') + '>' + content + '</section></div>'; }
+  function supportingResources(studies, logo, internal, confidential) {
+    // These designed, public guides are part of every release; IDs and titles match data/marketing.json.
+    const guides = {
+      hospitality: ['hospitality-recovery', 'Hospitality recovery'],
+      healthcare: ['medical-brief', 'Medical recovery brief'],
+      medical: ['medical-brief', 'Medical recovery brief'],
+      industrial: ['industrial-brief', 'Industrial recovery brief'],
+      manufacturing: ['manufacturing-brief', 'Manufacturing recovery brief'],
+      commercial: ['commercial-real-estate-brief', 'Commercial real estate recovery brief'],
+      'commercial real estate': ['commercial-real-estate-brief', 'Commercial real estate recovery brief'],
+      education: ['education-brief', 'Education recovery brief'],
+      technology: ['technology-brief', 'Technology recovery brief']
+    };
+    const selected = new Map();
+    studies.forEach(study => {
+      const sectorKey = study.sector.toLowerCase();
+      const [id, title] = Object.hasOwn(guides, sectorKey) ? guides[sectorKey] : ['national-recovery-capabilities', 'National recovery capabilities'];
+      if (!selected.has(id)) selected.set(id, { id, title, sectors: new Set() });
+      if (study.sector) selected.get(id).sectors.add(study.sector === 'Medical' ? 'Healthcare' : study.sector);
+    });
+    const materials = Array.from(selected.values());
+    let markup = '';
+    for (let offset = 0; offset < materials.length; offset += 6) {
+      const cards = materials.slice(offset, offset + 6).map(material => {
+        const url = new URL('marketing/' + material.id + '.html', publicationBase);
+        const pdf = new URL('marketing/downloads/' + material.id + '.pdf', publicationBase);
+        return '<li class="resource-card" data-resource-id="' + material.id + '"><p class="resource-sectors">' + escape(Array.from(material.sectors).join(' / ') || 'Recovery services') + '</p><h3>' + escape(material.title) + '</h3><div class="resource-actions"><a href="' + escape(url.href) + '">Read online <span aria-hidden="true">\u2197</span></a><a href="' + escape(pdf.href) + '" aria-label="PDF: ' + escape(material.title) + '">Open PDF <span aria-hidden="true">\u2197</span></a></div><p class="resource-address">' + escape(url.host + url.pathname) + '</p></li>';
+      }).join('');
+      markup += page('supporting-resources', '<div class="page-inner">' + header(logo, 'Supporting resources', confidential) + '<div class="page-content"><p class="eyebrow">For the work ahead</p><h2 class="index-title">Put the experience<br>to work.</h2><p class="index-intro">Capability guides for the industries in this collection. Use them to prepare your next conversation with NorthStar.</p><ul class="resource-grid">' + cards + '</ul><p class="resource-note">These links open companion publications online. The guides remain separate from the documented project experience in this portfolio.</p></div>' + footer(internal ? 'Internal use only / Supporting resources' : 'NorthStar / Supporting resources') + '</div>', 'portfolio-resources-' + (offset / 6 + 1));
+    }
+    return markup;
+  }
   function studyTemplate(study, images, logo, options, storyVisual) {
     const executive = options.edition === 'executive';
     const summaryMatches = study.overview.replace(/\s+/g, ' ').startsWith(study.summary.replace(/\s+/g, ' '));
@@ -256,7 +290,7 @@
     }
     const closerPhotos = studies.map(study => imagesFor(study).find(image => !image.conceptual)).filter(Boolean).slice(0, 3);
     const contactUrl = externalUrl(options.contactUrl), contactEmail = emailUrl(options.contactEmail);
-    const closer = page('closer inverse', '<div class="page-inner">' + header(logo, 'NorthStar', confidential) + '<div class="closer-content"><div class="closer-rule"></div><h2>We Bring Answers.</h2><p class="closer-description">' + escape(options.closingText || 'Tell us about your site, your priorities and the work ahead.') + '</p><div class="contact-panel"><p class="eyebrow">Discuss your project</p>' + (options.contactName ? '<strong>' + escape(options.contactName) + '</strong>' : '') + (contactEmail ? '<a class="contact-email" href="' + escape(contactEmail) + '">' + escape(options.contactEmail) + '</a>' : '') + (contactUrl ? '<a class="contact-link" href="' + escape(contactUrl) + '">Connect with NorthStar <span aria-hidden="true">\u2192</span></a>' : '') + '</div>' + (closerPhotos.length ? '<div class="closer-mosaic" style="--image-count:' + closerPhotos.length + '">' + closerPhotos.map(image => '<img src="' + escape(image.src) + '" alt="">').join('') + '</div>' : '') + '<div class="closer-bottom"><strong>NorthStar</strong><span>' + escape(date) + '<br>' + editionName + '</span></div></div>' + footer(internal ? 'Internal use only / NorthStar' : 'NorthStar / Selected experience') + '</div>');
+    const closer = supportingResources(studies, logo, internal, confidential) + page('closer inverse', '<div class="page-inner">' + header(logo, 'NorthStar', confidential) + '<div class="closer-content"><div class="closer-rule"></div><h2>We Bring Answers.</h2><p class="closer-description">' + escape(options.closingText || 'Tell us about your site, your priorities and the work ahead.') + '</p><div class="contact-panel"><p class="eyebrow">Discuss your project</p>' + (options.contactName ? '<strong>' + escape(options.contactName) + '</strong>' : '') + (contactEmail ? '<a class="contact-email" href="' + escape(contactEmail) + '">' + escape(options.contactEmail) + '</a>' : '') + (contactUrl ? '<a class="contact-link" href="' + escape(contactUrl) + '">Connect with NorthStar <span aria-hidden="true">\u2192</span></a>' : '') + '</div>' + (closerPhotos.length ? '<div class="closer-mosaic" style="--image-count:' + closerPhotos.length + '">' + closerPhotos.map(image => '<img src="' + escape(image.src) + '" alt="">').join('') + '</div>' : '') + '<div class="closer-bottom"><strong>NorthStar</strong><span>' + escape(date) + '<br>' + editionName + '</span></div></div>' + footer(internal ? 'Internal use only / NorthStar' : 'NorthStar / Selected experience') + '</div>');
     const toolbar = '<header class="export-toolbar"><div class="toolbar-title">Your NorthStar portfolio<small id="page-count">Composing your pages</small></div><div class="toolbar-actions"><button type="button" class="quiet" id="print-portfolio">Print</button><button type="button" id="download-html">Download HTML</button><button type="button" class="primary" id="download-pdf">Download PDF</button></div></header>';
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>' + escape(title.replace(/\n/g, ' ') + ' | NorthStar') + '</title><style>' + css.replace(/<\/style/gi, '<\\/style') + '</style></head><body data-edition="' + options.edition + '" data-audience="' + options.audience + '" data-filename="' + escape(safeName('NorthStar - ' + title.replace(/\n/g, ' ') + ' - ' + editionName + (internal ? ' - INTERNAL' : ''))) + '" data-pdf-endpoint="' + (window.NORTHSTAR_STATIC ? '' : escape(new URL('/api/portfolio-pdf', base).href)) + '">' + toolbar + '<div class="export-status" id="export-status" role="status" aria-live="polite"></div><main class="portfolio-shell" id="portfolio">' + cover + introduction + contents + '</main><nav class="page-dots" aria-label="Portfolio pages"></nav><p class="portfolio-help">Designed for US Letter. Download the PDF to share, or keep a portable HTML edition.</p><template id="logo-template">' + logoMarkup(logo) + '</template><template id="footer-template">' + footer(internal ? 'Internal use only / NorthStar' : 'NorthStar / Selected experience') + '</template><template id="study-bank">' + studies.map(study => studyTemplate(study, imagesFor(study), logo, options, study.storyVisual ? { ...study.storyVisual, src: assets.get(study.storyVisual.src) } : null)).join('') + '</template><template id="closer-template">' + closer + '</template><script>(' + runtime.toString() + ')();<\/script></body></html>';
   }

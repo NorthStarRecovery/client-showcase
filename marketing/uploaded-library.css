@@ -1,4 +1,14 @@
-/* Published uploads share the NorthStar collection without altering its curated cards. */
+/* Published PDFs participate in the main collection and its shared filters. */
+.mk-collection-status{scroll-margin-top:24px}
+.mk-collection-status>.ul-status:not(:empty){margin-bottom:20px}
+.mk-collection-status noscript p{font-size:14px;line-height:1.6;color:#54626f;margin-bottom:20px}
+.mk-grid>.ul-card{border-top:0}
+.mk-grid .ul-card-cover{aspect-ratio:1/.98;min-height:0;padding:30px 35px;background:#071b2c;color:#fff!important}
+.mk-grid .ul-cover-placeholder{color:#d6e0e9}
+.mk-grid .ul-card-actions{border-top:1px solid #d6e0e9;padding-top:11px;gap:12px;justify-content:space-between}
+.mk-publisher-footer{padding:0 4.5% 25px;font-size:12px;color:#54626f}
+.mk-publisher-footer a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
+.mk-publisher-footer a:hover{text-decoration:underline}
 .ul-section{padding:64px 4.5% 72px;border-top:1px solid #d6e0e9;scroll-margin-top:20px}
 .ul-library{border-top:1px solid #d6e0e9;scroll-margin-top:20px}
 .ul-library .mk-section-intro>div:last-child>p{font-size:16px;line-height:1.65;color:#54626f;max-width:44ch}

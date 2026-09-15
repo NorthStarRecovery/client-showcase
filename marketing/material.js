@@ -57,7 +57,7 @@ async function load() {
     material = validateMaterial(data);
     if (!material) { showUnavailable(); return; }
     document.title = `${material.title} | NorthStar`;
-    get('material-category').textContent = material.category;
+    get('material-category').textContent = ({ Medical: 'Healthcare', Commercial: 'Commercial real estate' })[material.category] || material.category;
     get('material-title').textContent = material.title;
     get('material-description').textContent = material.description;
     get('material-pages').textContent = `${material.pages} ${material.pages === 1 ? 'page' : 'pages'}`;

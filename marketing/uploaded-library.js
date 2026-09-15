@@ -83,39 +83,64 @@ function placeholder() {
   return node;
 }
 
-async function fetchPublished(client) {
+export async function fetchPublished(client) {
   const rows = new Map();
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await client.from('marketing_materials').select(PUBLIC_FIELDS)
-      .eq('status', 'published').order('published_at', { ascending: false }).order('id', { ascending: false })
-      .range(from, from + PAGE_SIZE - 1);
-    if (error || !Array.isArray(data)) throw new Error('The collection could not be loaded.');
+  const pageIdentities = new Set();
+  let complete = true;
+  for (let from = 0; ;) {
+    let result;
+    try {
+      result = await client.from('marketing_materials').select(PUBLIC_FIELDS, { count: 'exact' })
+        .eq('status', 'published').order('published_at', { ascending: false }).order('id', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+    } catch {
+      if (!rows.size) throw new Error('The collection could not be loaded.');
+      complete = false;
+      break;
+    }
+    const { data, error, count } = result;
+    if (error || !Array.isArray(data)) {
+      if (!rows.size) throw new Error('The collection could not be loaded.');
+      complete = false;
+      break;
+    }
+    // Detect repeated raw pages independently of validation: an invalid page can
+    // still be followed by valid publications that should remain discoverable.
+    const identity = JSON.stringify(data.map(row => row?.id ?? row));
+    if (data.length && pageIdentities.has(identity)) { complete = false; break; }
+    pageIdentities.add(identity);
     for (const row of data) {
-      if (!validateMaterial(row)) throw new Error('A material could not be loaded.');
+      if (!validateMaterial(row)) { complete = false; continue; }
+      if (rows.has(row.id)) complete = false;
       rows.set(row.id, row);
     }
-    if (data.length < PAGE_SIZE) break;
+    // Advance by the actual response size: the server may cap a requested page.
+    from += data.length;
+    if (Number.isInteger(count) && from >= count) break;
+    if (!data.length) {
+      if (Number.isInteger(count) && from < count) complete = false;
+      break;
+    }
   }
-  return [...rows.values()];
+  return { materials: [...rows.values()], complete };
 }
 
 function initializeLibrary() {
-  const grid = document.getElementById('ul-grid');
-  if (!grid) return;
-  const search = document.getElementById('ul-search');
-  const category = document.getElementById('ul-category');
+  const grid = document.getElementById('mk-grid');
   const status = document.getElementById('ul-status');
-  const count = document.getElementById('ul-count');
-  const empty = document.getElementById('ul-empty');
+  if (!grid || !status) return;
   const retry = document.getElementById('ul-retry');
   let client;
-  let materials = [];
   let renderRevision = 0;
-  let loaded = false;
   let loading = false;
 
   function createCard(row) {
     const article = element('article', 'ul-card');
+    article.dataset.materialSource = 'published';
+    article.dataset.category = row.category;
+    article.dataset.pages = row.pages;
+    article.dataset.format = row.pages === 1 ? 'one-page' : row.pages <= 3 ? 'extended' : 'long-form';
+    article.dataset.search = [row.title, row.category, row.description, row.keywords, row.search_text].join(' ');
     const href = materialUrl(row.id);
     const cover = element('a', 'ul-card-cover');
     cover.href = href;
@@ -144,7 +169,7 @@ function initializeLibrary() {
     });
     const body = element('div', 'ul-card-body');
     const meta = element('p', 'ul-card-meta');
-    meta.append(element('span', 'ul-card-category', row.category), element('span', '', `${row.pages} ${row.pages === 1 ? 'page' : 'pages'} · ${formatBytes(row.file_bytes)}`));
+    meta.append(element('span', 'ul-card-category', row.category === 'Medical' ? 'Healthcare' : row.category), element('span', '', `${row.pages} ${row.pages === 1 ? 'page' : 'pages'} · ${formatBytes(row.file_bytes)}`));
     const title = element('h3');
     const titleLink = element('a', '', row.title);
     titleLink.href = href;
@@ -202,55 +227,33 @@ function initializeLibrary() {
     }
   }
 
-  function render() {
-    if (!loaded) return;
-    const revision = ++renderRevision;
-    const words = search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-    const selected = category.value;
-    const filtered = materials.filter(row => {
-      if (selected && row.category !== selected) return false;
-      const text = [row.title, row.category, row.description, row.keywords, row.search_text].join(' ').toLocaleLowerCase();
-      return words.every(word => text.includes(word));
-    });
-    const cards = filtered.map(createCard);
-    grid.replaceChildren(...cards.map(card => card.article));
-    count.textContent = `${filtered.length} ${filtered.length === 1 ? 'material' : 'materials'}${filtered.length !== materials.length ? ` of ${materials.length}` : ''}`;
-    empty.hidden = filtered.length > 0;
-    empty.textContent = materials.length ? 'No matching materials. Try another search or choose a different category.' : 'New materials will appear here as NorthStar publishes them. Explore the curated collection above in the meantime.';
-    populateCovers(cards, revision);
-  }
-
   async function load() {
     if (loading) return;
     loading = true;
-    loaded = false;
-    ++renderRevision;
-    grid.replaceChildren();
-    grid.setAttribute('aria-busy', 'true');
+    const revision = ++renderRevision;
     status.textContent = 'Loading the latest materials…';
     status.dataset.state = 'loading';
-    empty.hidden = true;
     retry.hidden = true;
-    count.textContent = '';
     try {
       client ||= await createLibraryClient();
-      materials = await fetchPublished(client);
-      loaded = true;
-      status.textContent = '';
-      status.dataset.state = 'ready';
-      render();
+      const { materials, complete } = await fetchPublished(client);
+      const cards = materials.map(createCard);
+      grid.querySelectorAll('[data-material-source="published"]').forEach(card => card.remove());
+      grid.append(...cards.map(card => card.article));
+      document.dispatchEvent(new CustomEvent('northstar:materials-updated'));
+      status.textContent = complete ? '' : 'Some additional materials could not be loaded. You can browse the available materials below or try again.';
+      status.dataset.state = complete ? 'ready' : 'error';
+      retry.hidden = complete;
+      populateCovers(cards, revision);
     } catch {
-      status.textContent = 'The latest materials could not be loaded. Please try again. The curated collection above is still available.';
+      status.textContent = 'Additional materials could not be loaded. The available collection below is ready to browse. Try again to include the latest additions.';
       status.dataset.state = 'error';
       retry.hidden = false;
     } finally {
       loading = false;
-      grid.setAttribute('aria-busy', 'false');
     }
   }
 
-  search.addEventListener('input', render);
-  category.addEventListener('change', render);
   retry.addEventListener('click', load);
   load();
 }

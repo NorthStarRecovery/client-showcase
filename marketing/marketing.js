@@ -2,7 +2,7 @@
   'use strict';
   const search = document.querySelector('#mk-search');
   if (!search) return;
-  const cards = [...document.querySelectorAll('.mk-card')];
+  const grid = document.querySelector('#mk-grid');
   const categorySelect = document.querySelector('#mk-category');
   const formatSelect = document.querySelector('#mk-format');
   const categoryLinks = [...document.querySelectorAll('[data-jump-category]')];
@@ -21,28 +21,42 @@
     scenes.forEach(item => { item.hidden = item !== scene; });
     currentScene = scene;
     focusSelect.value = scene.dataset.industry;
-    focusStatus.textContent = scene.dataset.industry + ' in focus';
+    focusStatus.textContent = displayCategory(scene.dataset.industry) + ' in focus';
     if (changed && !motion.matches && typeof scene.animate === 'function') {
       scene.getAnimations().forEach(animation => animation.cancel());
       scene.animate([{ opacity: .4, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
     }
   }
   const normalize = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
-  const searchableText = new Map(cards.map(card => [card, normalize(card.dataset.search || '')]));
+  const displayCategory = value => ({ Medical: 'Healthcare', Commercial: 'Commercial real estate' })[value] || value;
+  const canonicalCategory = value => ({ Healthcare: 'Medical', Commercial: 'Commercial real estate' })[value] || value;
+  const searchableText = new WeakMap();
+  function cardText(card) {
+    if (!searchableText.has(card)) {
+      const category = canonicalCategory(card.dataset.category);
+      const aliases = category === 'Medical' ? 'healthcare medical hospital hospitals' : '';
+      const text = normalize([card.dataset.search || '', displayCategory(category), aliases].join(' '));
+      searchableText.set(card, new Set(text.match(/[\p{L}\p{N}]+/gu) || []));
+    }
+    return searchableText.get(card);
+  }
   function restoreQuery() {
     const params = new URLSearchParams(location.search);
     search.value = (params.get('q') || '').slice(0, 180);
     for (const [select, key] of [[categorySelect, 'category'], [formatSelect, 'format']]) {
-      select.value = [...select.options].some(option => option.value === params.get(key)) ? params.get(key) : '';
+      const value = key === 'category' ? canonicalCategory(params.get(key)) : params.get(key);
+      select.value = [...select.options].some(option => option.value === value) ? value : '';
     }
   }
   function filter(updateUrl = true, hash) {
     const category = categorySelect.value;
     const format = formatSelect.value;
-    const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+    const terms = normalize(search.value.trim()).match(/[\p{L}\p{N}]+/gu) || [];
+    const cards = [...grid.querySelectorAll('.mk-card, .ul-card')];
     let visible = 0;
     for (const card of cards) {
-      const matches = (!category || card.dataset.category === category) && (!format || card.dataset.format === format) && terms.every(term => searchableText.get(card).includes(term));
+      const words = cardText(card);
+      const matches = (!category || canonicalCategory(card.dataset.category) === category) && (!format || card.dataset.format === format) && terms.every(term => words.has(term) || words.has(term + 's') || (term.endsWith('s') && words.has(term.slice(0, -1))));
       card.hidden = !matches;
       if (matches) visible++;
     }
@@ -127,6 +141,7 @@
     restoreQuery();
     filter(false);
   });
+  document.addEventListener('northstar:materials-updated', () => filter(false));
   document.querySelector('#mk-tools').hidden = false;
   document.querySelector('#mk-focus-switch').hidden = false;
   restoreQuery();
