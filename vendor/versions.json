@@ -1,0 +1,6 @@
+{
+  "pdfjs-dist": "5.6.205",
+  "pdf-lib": "1.17.1",
+  "@supabase/supabase-js": "2.116.0",
+  "note": "Pinned browser distributions. Supabase ESM wrapper exports createClient from its official UMD distribution. License files accompany each package."
+}

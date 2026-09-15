@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071B2C">
+  <meta name="description" content="Read and download published NorthStar marketing materials.">
+  <title>Marketing material | NorthStar</title>
+  <link rel="icon" href="../assets/brand/v2-symbol-blue.svg" type="image/svg+xml">
+  <link rel="preload" href="../fonts/v2/archivo.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="upload.css">
+  <link rel="stylesheet" href="uploaded-library.css">
+  <link rel="stylesheet" href="../analytics.css">
+  <script src="../analytics-config.js" defer></script>
+  <script src="../analytics.js" defer></script>
+  <script type="module" src="material.js"></script>
+</head>
+<body class="up-page">
+  <a class="up-skip" href="#material-main">Skip to marketing material</a>
+  <header class="up-header">
+    <a class="up-brand" href="../" aria-label="NorthStar Project Experience home"><img src="../assets/brand/v2-symbol-white.svg" width="45" height="45" alt=""><span>NorthStar<small>We Bring Answers.</small></span></a>
+    <nav aria-label="Main navigation"><a href="../#library">Project experience</a><a href="./#uploaded-materials">Marketing materials</a></nav>
+  </header>
+  <main class="up-main ul-reader" id="material-main">
+    <a class="ul-breadcrumb" href="./#uploaded-materials"><i class="up-icon up-icon-left" aria-hidden="true"></i>Back to the collection</a>
+    <p id="material-status" class="ul-status ul-reader-status" role="status" aria-live="polite" aria-atomic="true">Loading marketing material…</p>
+    <button id="material-retry" class="ul-button ul-retry" type="button" hidden>Try again</button>
+    <noscript><p class="up-notice">Enable JavaScript to view this material and download its PDF. You can also <a href="./">browse the curated collection</a>.</p></noscript>
+    <article id="material-content" hidden>
+      <header class="ul-reader-heading">
+        <p class="ul-eyebrow" id="material-category"></p>
+        <h1 id="material-title"></h1>
+        <p class="ul-reader-meta"><span id="material-pages"></span><span id="material-size"></span><span>PDF</span></p>
+      </header>
+      <div class="ul-reader-body">
+        <figure class="ul-reader-cover"><img id="material-cover" alt="" hidden><span class="ul-cover-placeholder" id="material-cover-placeholder"><i class="ul-icon ul-icon-file" aria-hidden="true"></i>PDF material</span></figure>
+        <div class="ul-reader-copy">
+          <p id="material-description" class="ul-reader-description"></p>
+          <div class="ul-reader-actions">
+            <button class="ul-button" id="material-download" type="button">Download PDF <i class="ul-icon ul-icon-download" aria-hidden="true"></i></button>
+            <button class="ul-button ul-button-secondary" id="material-read" type="button" aria-controls="material-pdf-panel" aria-expanded="false">Read PDF <i class="ul-icon ul-icon-arrow" aria-hidden="true"></i></button>
+          </div>
+          <button class="ul-reader-share" id="material-share" type="button">Copy link to this material</button>
+          <p id="material-action-status" class="ul-status" role="status" aria-live="polite" aria-atomic="true"></p>
+          <p class="ul-reader-help">Share this page to give clients and colleagues access to the current published material. No sign-in is required.</p>
+        </div>
+      </div>
+      <section id="material-pdf-panel" class="ul-pdf-panel" aria-labelledby="material-pdf-heading" hidden>
+        <div class="ul-pdf-heading"><h2 id="material-pdf-heading" tabindex="-1">Read the material</h2><button id="material-close-pdf" class="ul-reader-share" type="button">Close preview</button></div>
+        <iframe id="material-pdf" class="ul-pdf-frame" title="Marketing material PDF" referrerpolicy="no-referrer"></iframe>
+        <p class="ul-reader-help">If the PDF does not appear in your browser, use Download PDF above.</p>
+      </section>
+    </article>
+    <section class="ul-unavailable" id="material-unavailable" aria-labelledby="material-unavailable-title" hidden>
+      <h1 id="material-unavailable-title">Material unavailable.</h1>
+      <p>This material may no longer be published, or the link may be incomplete. Explore the collection for current NorthStar materials.</p>
+      <a class="ul-button" href="./#uploaded-materials">Browse the collection <i class="ul-icon ul-icon-arrow" aria-hidden="true"></i></a>
+    </section>
+  </main>
+  <footer class="up-footer"><span><strong>NorthStar</strong><span aria-hidden="true">/</span>We Bring Answers.</span><a href="tel:+18002832933">24/7 emergency response: 1-800-283-2933</a></footer>
+</body>
+</html>

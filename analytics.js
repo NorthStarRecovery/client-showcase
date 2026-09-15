@@ -98,7 +98,8 @@
       } else if (key === 'file_name') {
         const match = value.match(/^([a-z0-9]+(?:-[a-z0-9]+)*)\.(pdf|zip|html)$/);
         if (match && (Object.hasOwn(materialIndustries, match[1]) || bundles.has(match[1])
-          || match[1] === 'northstar-portfolio')) result[key] = value;
+          || match[1] === 'northstar-portfolio'
+          || /^upload-[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\.pdf$/.test(value))) result[key] = value;
       } else if (key === 'file_extension') {
         if (['pdf', 'zip', 'html'].includes(value)) result[key] = value;
       } else if (normalizeSlug(value)) result[key] = value;
@@ -123,6 +124,7 @@
     }
     if (path === 'privacy.html') return { page_type: 'privacy' };
     if (path === 'team-tools.html') return { page_type: 'team_tools' };
+    if (path === 'marketing/material.html') return { page_type: 'material' };
     const material = path.match(/^marketing\/([a-z0-9-]+)\.html$/)?.[1];
     if (material && Object.hasOwn(materialIndustries, material)) {
       return { page_type: 'material', material_id: material, industry: materialIndustries[material],
@@ -204,6 +206,8 @@
     if (!eligible()) return false;
     currentPage = { ...inferredPage(), ...safeProperties(properties) };
     if (!initialized || failed) return false;
+    // Uploaded material metadata arrives asynchronously. Measure only once its identity is known.
+    if (location.pathname === base + 'marketing/material.html' && !currentPage.material_id) return false;
     const path = location.pathname;
     if (lastPage === path) return false;
     if (!send('page_view', currentPage)) return false;

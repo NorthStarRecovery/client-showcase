@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071B2C">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https://kzadopnhlmopfhsdmvsm.supabase.co; img-src 'self' blob: data:; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="description" content="NorthStar administrator workspace for adding approved marketing materials to the public collection.">
+  <title>Add marketing material | NorthStar</title>
+  <link rel="icon" href="../assets/brand/v2-symbol-blue.svg" type="image/svg+xml">
+  <link rel="preload" href="../fonts/v2/archivo.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="upload.css">
+  <script type="module" src="upload.js"></script>
+</head>
+<body class="up-page">
+  <a class="up-skip" href="#up-main">Skip to material workspace</a>
+  <header class="up-header">
+    <a class="up-brand" href="../" aria-label="NorthStar Project Experience home">
+      <img src="../assets/brand/v2-symbol-white.svg" width="45" height="45" alt="">
+      <span>NorthStar<small>We Bring Answers.</small></span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="./">Marketing materials</a>
+      <a href="../team-tools.html">Team tools</a>
+      <button class="up-signout" id="up-signout" type="button" hidden>Sign out</button>
+    </nav>
+  </header>
+  <main id="up-main" class="up-main">
+    <section class="up-intro" aria-labelledby="up-heading">
+      <div>
+        <p class="up-eyebrow">NORTHSTAR / COLLECTION MANAGEMENT</p>
+        <h1 id="up-heading">Your material.<br>A place in the collection.</h1>
+      </div>
+      <p class="up-intro-copy">Add an approved flyer, guide, or visual. Review the details, then make it available for clients and the NorthStar team to find and download.</p>
+    </section>
+
+    <noscript><p class="up-notice">Enable JavaScript to sign in and add marketing materials. You can still <a href="./">browse the public collection</a>.</p></noscript>
+
+    <section class="up-signin-panel" id="up-setup" aria-labelledby="up-setup-heading" hidden>
+      <div class="up-signin-copy">
+        <p class="up-eyebrow">ADMINISTRATOR SETUP</p>
+        <h2 id="up-setup-heading">Set your password.</h2>
+        <p>Your private, single-use invitation gives you access to manage the marketing collection. Create a password to finish setting up your administrator account.</p>
+      </div>
+      <form id="up-setup-form" class="up-signin-form">
+        <div class="up-field">
+          <label for="up-setup-email">Administrator email</label>
+          <input id="up-setup-email" name="email" type="email" autocomplete="username" readonly required>
+        </div>
+        <div class="up-field">
+          <label for="up-setup-password">New password</label>
+          <input id="up-setup-password" name="password" type="password" autocomplete="new-password" minlength="12" required aria-describedby="up-password-help">
+          <p id="up-password-help" class="up-help">Use at least 12 characters and a password you do not use elsewhere.</p>
+        </div>
+        <div class="up-field">
+          <label for="up-setup-confirm">Confirm password</label>
+          <input id="up-setup-confirm" name="password-confirmation" type="password" autocomplete="new-password" minlength="12" required>
+        </div>
+        <button class="up-button" id="up-setup-submit" type="submit">Create administrator access <i class="up-icon up-icon-arrow" aria-hidden="true"></i></button>
+        <p id="up-setup-status" class="up-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      </form>
+    </section>
+
+    <section class="up-signin-panel" id="up-signin-panel" aria-labelledby="up-signin-heading">
+      <div class="up-signin-copy">
+        <p class="up-eyebrow">ADMINISTRATOR ACCESS</p>
+        <h2 id="up-signin-heading">Sign in to publish.</h2>
+        <p>The collection is open to everyone. Adding and managing materials is reserved for authorized NorthStar administrators.</p>
+        <a class="up-text-link" href="./"><i class="up-icon up-icon-left" aria-hidden="true"></i>Return to the collection</a>
+      </div>
+      <form id="up-signin-form" class="up-signin-form">
+        <div class="up-field">
+          <label for="up-email">Email address</label>
+          <input id="up-email" name="email" type="email" autocomplete="username" required spellcheck="false" inputmode="email">
+        </div>
+        <div class="up-field">
+          <label for="up-password">Password</label>
+          <input id="up-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="up-button" id="up-signin" type="submit">Sign in <i class="up-icon up-icon-arrow" aria-hidden="true"></i></button>
+        <p id="up-auth-status" class="up-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="up-help">Use your administrator account. Public visitors do not need an account to view or download materials.</p>
+      </form>
+    </section>
+
+    <div id="up-workspace" hidden>
+      <ol class="up-progress" aria-label="Publishing steps">
+        <li><span class="up-step-number">01</span><span>Add a material</span></li>
+        <li><span class="up-step-number">02</span><span>Review the details</span></li>
+        <li><span class="up-step-number">03</span><span>Publish to the collection</span></li>
+      </ol>
+
+      <form id="up-material-form">
+        <section class="up-section" aria-labelledby="up-add-heading">
+          <div class="up-section-heading">
+            <p class="up-eyebrow">01 / ADD</p>
+            <h2 id="up-add-heading">Start with your file.</h2>
+            <p>Choose the finished material you want people to download.</p>
+          </div>
+          <div class="up-section-body">
+            <div class="up-drop" id="up-drop">
+              <i class="up-icon up-icon-file" aria-hidden="true"></i>
+              <h3>Drop your material here</h3>
+              <p>or choose a file from your device</p>
+              <label class="up-button up-file-button" for="up-file">Choose a file <i class="up-icon up-icon-plus" aria-hidden="true"></i></label>
+              <input class="up-file-input" id="up-file" name="material" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,.pdf,.png,.jpg,.jpeg,.webp" aria-describedby="up-file-help up-local-note">
+              <p id="up-file-help" class="up-file-help">PDF, PNG, JPG, or WebP <span aria-hidden="true">/</span> Maximum 15 MB</p>
+            </div>
+            <p id="up-local-note" class="up-help up-local-note"><i class="up-icon up-icon-shield" aria-hidden="true"></i>Your file stays on this device until you choose to publish.</p>
+            <p id="up-status" class="up-status" role="status" aria-live="polite" aria-atomic="true"></p>
+          </div>
+        </section>
+
+        <section class="up-section" id="up-review" aria-labelledby="up-review-heading" hidden>
+          <div class="up-section-heading">
+            <p class="up-eyebrow">02 / REVIEW</p>
+            <h2 id="up-review-heading">Make it easy to find.</h2>
+            <p>Check the preview and give your material a clear title, a useful description, and the right category.</p>
+            <figure class="up-preview-figure">
+              <div class="up-preview-frame"><img id="up-preview" alt="Preview of the selected marketing material" hidden></div>
+              <figcaption><span id="up-file-name">Selected material</span><span id="up-page-count" class="up-help"></span><span id="up-extraction-status" class="up-help" role="status"></span></figcaption>
+            </figure>
+          </div>
+          <div class="up-section-body up-fields">
+            <div class="up-field">
+              <label for="up-title">Material title <span>Required</span></label>
+              <input id="up-title" name="title" type="text" maxlength="100" required aria-describedby="up-title-help">
+              <p id="up-title-help" class="up-help">Use the title you want people to see in the collection.</p>
+            </div>
+            <div class="up-field">
+              <label for="up-category">Industry or subject <span>Required</span></label>
+              <select id="up-category" name="category" required>
+                <option value="">Choose a category</option>
+                <option>Manufacturing</option>
+                <option>Industrial</option>
+                <option>Commercial real estate</option>
+                <option>Medical</option>
+                <option>Education</option>
+                <option>Technology</option>
+                <option>Hospitality</option>
+                <option>Recovery services</option>
+                <option>Premier Response</option>
+              </select>
+            </div>
+            <div class="up-field">
+              <label for="up-description">Short description <span>Required</span></label>
+              <textarea id="up-description" name="description" rows="4" maxlength="400" required aria-describedby="up-description-help"></textarea>
+              <p id="up-description-help" class="up-help">A sentence or two about who this material helps and what it covers. Up to 400 characters.</p>
+            </div>
+            <div class="up-field">
+              <label for="up-keywords">Search keywords <span>Optional</span></label>
+              <input id="up-keywords" name="keywords" type="text" maxlength="300" aria-describedby="up-keywords-help">
+              <p id="up-keywords-help" class="up-help">Add relevant services, programs, or topics, separated by commas.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="up-section up-publish-section" id="up-publish-section" aria-labelledby="up-publish-heading" hidden>
+          <div class="up-section-heading">
+            <p class="up-eyebrow">03 / PUBLISH</p>
+            <h2 id="up-publish-heading">Ready for the collection.</h2>
+          </div>
+          <div class="up-section-body">
+            <p class="up-publish-copy">Publishing makes this material and its details available on the public NorthStar website. Anyone will be able to view and download it.</p>
+            <p class="up-help">Only publish materials approved for external sharing. Check that the file is the final version and contains no confidential information.</p>
+            <div class="up-actions">
+              <button class="up-button" id="up-publish" type="submit" disabled>Publish material <i class="up-icon up-icon-arrow" aria-hidden="true"></i></button>
+              <button class="up-text-button" id="up-reset" type="button">Clear and start again</button>
+            </div>
+            <div id="up-result" class="up-result" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+          </div>
+        </section>
+      </form>
+
+      <section class="up-managed-section" aria-labelledby="up-managed-heading">
+        <div class="up-managed-heading">
+          <div><p class="up-eyebrow">YOUR COLLECTION</p><h2 id="up-managed-heading">Manage uploaded materials.</h2></div>
+          <a class="up-text-link" href="./">View the public collection <i class="up-icon up-icon-arrow" aria-hidden="true"></i></a>
+        </div>
+        <div id="up-managed" class="up-managed" aria-live="polite" aria-busy="false"><p class="up-help">Your uploaded materials will appear here.</p></div>
+      </section>
+    </div>
+  </main>
+  <footer class="up-footer"><span>NorthStar <span aria-hidden="true">/</span> Marketing materials</span><a href="./">Back to the collection <i class="up-icon up-icon-arrow" aria-hidden="true"></i></a></footer>
+</body>
+</html>
