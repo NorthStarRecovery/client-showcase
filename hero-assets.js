@@ -9,8 +9,8 @@ window.NORTHSTAR_HERO_ASSETS = [
     "position": "54% 50%",
     "sector": "DEMOLITION",
     "title": "Make room for what comes next.",
-    "location": "AI-generated editorial image",
-    "outcome": "AI-generated editorial image. Structural removal and site transition. Explore the capabilities and documented experience behind the work.",
+    "location": "Structural removal and site transition",
+    "outcome": "Editorial project view. Explore the capabilities and documented experience behind the work.",
     "href": "marketing/demolition-capabilities.html"
   },
   {
@@ -22,8 +22,8 @@ window.NORTHSTAR_HERO_ASSETS = [
     "position": "58% 46%",
     "sector": "SPECIALTY SERVICES",
     "title": "Complex properties. Focused expertise.",
-    "location": "AI-generated editorial image",
-    "outcome": "AI-generated editorial image. Retained assets and specialist work. Explore the capabilities and documented experience behind the work.",
+    "location": "Retained assets and specialist work",
+    "outcome": "Editorial project view. Explore the capabilities and documented experience behind the work.",
     "href": "marketing/specialty-services-overview.html"
   },
   {
@@ -35,8 +35,8 @@ window.NORTHSTAR_HERO_ASSETS = [
     "position": "50% 48%",
     "sector": "ENVIRONMENTAL SERVICES",
     "title": "Connect the work to the next use.",
-    "location": "AI-generated editorial image",
-    "outcome": "AI-generated editorial image. Site conditions and restoration. Explore the capabilities and documented experience behind the work.",
+    "location": "Site conditions and restoration",
+    "outcome": "Editorial project view. Explore the capabilities and documented experience behind the work.",
     "href": "marketing/environmental-site-services.html"
   }
 ];
