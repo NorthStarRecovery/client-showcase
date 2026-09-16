@@ -277,7 +277,7 @@
     window.NorthStarPortfolioReady = (async () => { await document.fonts.ready; await waitImages(); fitTitle(document.querySelector('.cover h1'), 240, 40); if (document.body.dataset.paginated !== 'true') composeProjects(); await waitImages(); checkLayout(); bindControls(); document.body.dataset.ready = 'true'; window.NorthStarPortfolio = Object.freeze({ html: () => serialized(false), pdfHtml: () => serialized(true) }); return { pages: document.querySelectorAll('.page').length }; })().catch(error => { status.textContent = error.message; document.body.dataset.failed = 'true'; document.querySelectorAll('.toolbar-actions button').forEach(button => { button.disabled = true; }); throw error; });
   }
   async function stylesheet() {
-    const response = await fetch(new URL('export.css?v=f4985b3a707b', base)); if (!response.ok) throw new Error('The portfolio design could not be loaded.');
+    const response = await fetch(new URL('export.css?v=7d3a16f265d5', base)); if (!response.ok) throw new Error('The portfolio design could not be loaded.');
     const css = await response.text(); const urls = Array.from(new Set(Array.from(css.matchAll(/url\(["']?([^"')]+)["']?\)/g), match => match[1]))); const fonts = new Map(await Promise.all(urls.map(async url => [url, await embed(url)])));
     return css.replace(/url\(["']?([^"')]+)["']?\)/g, (_, url) => 'url("' + fonts.get(url) + '")');
   }

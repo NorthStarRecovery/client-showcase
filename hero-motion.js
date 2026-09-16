@@ -1,16 +1,15 @@
 /* Hero choreography shares the site's motion preference and native scrolling. */
 (() => {
   'use strict';
-  const duration = 8000;
+  const duration = 3000;
   window.NorthStarHeroMotion = Object.freeze({ create({ hero, media, image, advance }) {
     if (!hero || !media || !image) return null;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
     let timer = null, remaining = duration, started = 0, visible = false;
-    let hovering = false, focused = false, loading = false, initialized = false, printing = false;
+    let focused = false, loading = false, initialized = false, printing = false;
     let animations = [], camera = null, progress = null, previous = null;
     const disabled = () => reduced.matches || printing || Boolean(window.NorthStarMotion?.isPaused());
-    const canPlay = () => initialized && !disabled() && !document.hidden && visible && !hovering && !focused && !loading && !hero.closest('[hidden]') && !document.querySelector('dialog[open]');
+    const canPlay = () => initialized && !disabled() && !document.hidden && visible && !focused && !loading && !hero.closest('[hidden]') && !document.querySelector('dialog[open]');
     const stopTimer = () => {
       if (timer === null) return;
       clearTimeout(timer); timer = null;
@@ -95,10 +94,15 @@
       visible = entries[0].isIntersecting && entries[0].intersectionRatio >= .15; sync();
     }, { threshold: [0, .15] }) : null;
     if (observer) observer.observe(hero); else visible = true;
-    hero.addEventListener('pointerenter', () => { if (finePointer.matches) { hovering = true; sync(); } });
-    hero.addEventListener('pointerleave', () => { hovering = false; sync(); });
-    hero.addEventListener('focusin', () => { focused = true; sync(); });
-    hero.addEventListener('focusout', () => { queueMicrotask(() => { focused = hero.contains(document.activeElement); sync(); }); });
+    const updateFocus = () => {
+      focused = hero.contains(document.activeElement) && document.activeElement.matches(':focus-visible');
+      sync();
+    };
+    hero.addEventListener('focusin', updateFocus);
+    hero.addEventListener('focusout', () => queueMicrotask(updateFocus));
+    hero.addEventListener('keydown', () => queueMicrotask(updateFocus));
+    // Pointer interaction should not leave automatic playback stuck on a focused control.
+    hero.addEventListener('pointerdown', () => { focused = false; sync(); });
     document.addEventListener('visibilitychange', sync);
     document.addEventListener('northstar:motion-change', sync);
     document.addEventListener('northstar:render', sync);

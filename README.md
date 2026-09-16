@@ -18,7 +18,7 @@ Designed PDF flyers use corporate contact details on the page. Their Author meta
 
 The site includes large photographic openings, scroll-led architectural chapters, coordinated entrances and gallery feedback. Motion controls persist across projects and resources, and device reduced-motion preferences take priority. Printed publications remain static.
 
-The hero advances every eight active seconds with slow camera movement, crossfades, a directional NorthStar-blue sweep and timed progress segments. Hover, keyboard focus, background tabs, offscreen content and open dialogs pause automatic playback. Manual arrows and image selectors remain available; Motion off and device reduced motion stop the animation.
+The hero advances every three active seconds with camera movement, crossfades, a directional NorthStar-blue sweep and timed progress segments. Hover and mouse/touch control clicks keep playback running. Keyboard focus, background tabs, offscreen content and open dialogs pause automatic playback. Manual arrows and image selectors remain available; Motion off and device reduced motion stop the animation.
 
 The shared footer provides [adelacruz@northstar.com](mailto:adelacruz@northstar.com) for questions and **1-800-283-2933** for 24-hour emergency response. It links to the Privacy Policy, Cookie Policy, Terms and Conditions and Cookie Settings. Analytics runs automatically until a visitor turns it off; settings remain accessible from the footer.
 
