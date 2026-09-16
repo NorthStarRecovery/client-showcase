@@ -4,6 +4,8 @@
 
 NorthStar project experience across industries, locations and services. Browse 126 case studies, explore project photography and explanatory illustrations, and save a collection of relevant work. The library includes demolition, environmental remediation, water infrastructure, energy, research facilities and recovery.
 
+Case Studies and Marketing Materials are the two primary navigation destinations, with a visible current-section indicator and a dedicated two-link row on mobile. The homepage includes a marketing call to action in the hero and a brochure preview directly below it. Shared footer links connect both libraries.
+
 Collections can be exported as self-contained HTML or as a designed PDF using the browser's **Save PDF** action. Drafts retain personalized cover fields and project order in the visitor's browser. Shared collection links contain only public project IDs and order. Exports include relevant industry-resource links.
 
 This repository contains the published static website. GitHub Pages serves the root of the `main` branch. The `.nojekyll` file preserves the prepared HTML, CSS, JavaScript, fonts and imagery without additional processing.

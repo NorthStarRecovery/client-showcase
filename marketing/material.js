@@ -1,5 +1,5 @@
-import { createLibraryClient, PUBLIC_FIELDS } from './library-client.js?v=7d3a16f265d5';
-import { UUID_PATTERN, validateMaterial, formatBytes, materialUrl, signedMaterialUrl, downloadMaterial } from './uploaded-library.js?v=7d3a16f265d5';
+import { createLibraryClient, PUBLIC_FIELDS } from './library-client.js?v=c25a1ef1ac23';
+import { UUID_PATTERN, validateMaterial, formatBytes, materialUrl, signedMaterialUrl, downloadMaterial } from './uploaded-library.js?v=c25a1ef1ac23';
 
 const get = id => document.getElementById(id);
 const status = get('material-status');
