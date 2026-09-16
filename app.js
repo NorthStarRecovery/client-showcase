@@ -10,7 +10,7 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
-  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=69fd725dd7d7') : null;
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=e450dfe07b91') : null;
   let metadataRevision = 0;
   function updatePageMetadata(project = null) {
     document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';
@@ -41,7 +41,7 @@
   }
   const photoSrc = project => asset(project.hero || project.images?.[0]?.src || project.visual?.src);
   const isConceptual = project => !asset(project.hero || project.images?.[0]?.src) && asset(project.visual?.src);
-  const caption = (project,src) => project.imageCaptions?.[src] || (src === project.visual?.src ? project.visual.caption || 'Conceptual illustration. Not a project photograph.' : `${project.title} — project photograph`);
+  const caption = (project,src) => project.imageCaptions?.[src] || (src === project.visual?.src ? project.visual.caption || 'Conceptual illustration. Not a project photograph.' : `${project.title}: project photograph`);
   const displayCaption = value => String(value || '').replace(/\s*Conceptual (?:project )?illustration[.;]?\s*(?:Not a (?:site|project) photograph(?: or plan)?\.?|Not a photograph of the project\.?)?/gi, '').trim();
   const byId = new Map(studies.map(project => [project.id, project]));
   const storageKey = internal ? 'northstar-experience-internal-v2' : 'northstar-experience-v1';
@@ -283,7 +283,12 @@
     $('hero-image').src = src; $('hero-image').alt = heroScenes.length ? project.alt : project.title;
     $('hero-image').style.objectPosition = heroScenes.length ? project.position || 'center' : 'center';
     $('hero-sector').textContent = project.sector.toUpperCase(); $('hero-title').textContent = project.title; $('hero-location').textContent = project.location;
-    if (heroScenes.length) { delete $('hero-case').dataset.projectLink; $('hero-case').setAttribute('data-home',''); $('hero-case').href = basePath + '#library'; }
+    if (heroScenes.length) {
+      delete $('hero-case').dataset.projectLink;
+      const destination = typeof project.href === 'string' && /^marketing\/[a-z0-9]+(?:-[a-z0-9]+)*\.html$/.test(project.href) ? project.href : '#library';
+      $('hero-case').toggleAttribute('data-home', destination === '#library');
+      $('hero-case').href = basePath + destination;
+    }
     else { $('hero-case').dataset.projectLink = project.id; $('hero-case').removeAttribute('data-home'); $('hero-case').href = projectUrl(project.id); }
     $('hero-outcome').textContent = project.outcome || project.summary;
     $('feature-index').textContent = String(feature+1).padStart(2,'0'); $('feature-total').textContent = String(items.length).padStart(2,'0');

@@ -74,7 +74,8 @@
     let visible = 0;
     for (const card of cards) {
       const words = cardText(card);
-      const matches = (!category || canonicalCategory(card.dataset.category) === category) && (!format || card.dataset.format === format) && terms.every(term => words.has(term) || words.has(term + 's') || (term.endsWith('s') && words.has(term.slice(0, -1))));
+      const matchesFormat = !format || (format === 'two-page' ? card.dataset.pages === '2' : format === 'three-page' ? card.dataset.pages === '3' : card.dataset.format === format);
+      const matches = (!category || canonicalCategory(card.dataset.category) === category) && matchesFormat && terms.every(term => words.has(term) || words.has(term + 's') || (term.endsWith('s') && words.has(term.slice(0, -1))));
       card.hidden = !matches;
       if (matches) visible++;
     }

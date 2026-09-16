@@ -101,8 +101,8 @@ export function projectPageSeo(config, project) {
 }
 
 export function marketingPageSeo(config, materials = []) {
-  const title = 'Industry Guides & Resources | NorthStar';
-  const description = 'Explore NorthStar industry guides, project experience and readiness resources for manufacturing, commercial real estate, healthcare, education, technology and hospitality.';
+  const title = 'Service & Industry Marketing Resources | NorthStar';
+  const description = 'Explore NorthStar demolition, abatement, environmental and decommissioning capabilities, safety and recognition, plus industry recovery and readiness guides.';
   const path = 'marketing/';
   const canonical = siteUrl(config, path);
   const page = { '@type': 'CollectionPage', name: title, description, ...(canonical ? { '@id': canonical + '#webpage', url: canonical, mainEntity: { '@type': 'ItemList', itemListElement: materials.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.title, url: siteUrl(config, 'marketing/' + encodeURIComponent(item.id) + '.html') })) } } : {}) };

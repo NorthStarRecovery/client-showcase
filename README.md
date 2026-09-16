@@ -8,17 +8,19 @@ Collections can be exported as self-contained HTML or as a designed PDF using th
 
 This repository contains the published static website. GitHub Pages serves the root of the `main` branch. The `.nojekyll` file preserves the prepared HTML, CSS, JavaScript, fonts and imagery without additional processing.
 
-The [Marketing Materials collection](https://northstarrecovery.github.io/client-showcase/marketing/) includes 20 designed publications plus approved uploaded materials, with one search and industry/page-length filters. Designed publications offer online reading editions, downloadable PDFs and a collection archive. Manufacturing, industrial, commercial real estate, healthcare, education and technology each have a one-page overview and a three-page brief.
+The [Marketing Materials collection](https://northstarrecovery.github.io/client-showcase/marketing/) includes 36 designed publications totaling 68 pages, plus approved uploaded materials. The specialty collection adds 16 demolition, abatement, environmental, decommissioning, qualifications and safety materials: six one-page flyers, six two-page briefs and four three-page guides. All designed materials offer online reading, downloadable PDFs and verified collection archives. Search and industry/page-length filters cover the library.
 
 Architectural and project illustrations help explain scale, planning and recovery. Original documents and private editorial materials are not included.
 
-The opening carousel presents three general capability scenes with descriptive captions. Project galleries include source photographs and credited openly licensed imagery. Responsive WebP previews and WOFF2 fonts reduce transfer size.
+Twelve distinct editorial reinterpretations appear across service flyers, the resource library and homepage. The opening carousel presents three service-led scenes with editorial disclosure. Original project galleries remain unchanged and include source photographs and credited openly licensed imagery. Responsive WebP previews and WOFF2 fonts reduce transfer size.
+
+Designed PDF flyers use corporate contact details on the page. Their Author metadata credits Andres Delacruz and adelacruz@northstar.com. Visible flyer copy contains no em or en dashes.
 
 The site includes large photographic openings, scroll-led architectural chapters, coordinated entrances and gallery feedback. Motion controls persist across projects and resources, and device reduced-motion preferences take priority. Printed publications remain static.
 
 The shared footer provides [adelacruz@northstar.com](mailto:adelacruz@northstar.com) for questions and **1-800-283-2933** for 24-hour emergency response. It links to the Privacy Policy, Cookie Policy, Terms and Conditions and Cookie Settings. Analytics runs automatically until a visitor turns it off; settings remain accessible from the footer.
 
-Individual pages include search and social metadata, canonical addresses and structured data. The sitemap lists 151 public addresses. A custom 404 helps visitors return to projects or resources. Host-level crawler files are maintained separately in [NorthStarRecovery/northstarrecovery.github.io](https://github.com/NorthStarRecovery/northstarrecovery.github.io).
+Individual pages include search and social metadata, canonical addresses and structured data. The sitemap lists 167 public addresses. A custom 404 helps visitors return to projects or resources. Host-level crawler files are maintained separately in [NorthStarRecovery/northstarrecovery.github.io](https://github.com/NorthStarRecovery/northstarrecovery.github.io).
 
 NorthStar branding, project content and imagery remain the property of their respective owners.
 

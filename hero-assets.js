@@ -1,42 +1,42 @@
-/* Approved general capability artwork; documentary case photographs remain separate. */
+/* AI-generated editorial capability artwork; documentary case photographs remain separate. */
 window.NORTHSTAR_HERO_ASSETS = [
   {
-    "src": "assets/capabilities/07-crew-briefing-dawn-1280.webp",
-    "srcset": "assets/capabilities/07-crew-briefing-dawn-640.webp 640w, assets/capabilities/07-crew-briefing-dawn-1280.webp 1280w, assets/capabilities/07-crew-briefing-dawn-1912.webp 1912w",
-    "width": 1912,
-    "height": 823,
-    "alt": "NorthStar crew briefing at dawn.",
-    "sector": "PEOPLE & COORDINATION",
-    "title": "The right team. A coordinated response.",
-    "position": "67% 69%",
-    "location": "Planning the response",
-    "outcome": "Explore the documented projects behind NorthStar’s experience.",
-    "href": "#library"
+    "src": "assets/capabilities/editorial/editorial-warehouse-aerial-1280.webp",
+    "srcset": "assets/capabilities/editorial/editorial-warehouse-aerial-640.webp 640w, assets/capabilities/editorial/editorial-warehouse-aerial-1280.webp 1280w, assets/capabilities/editorial/editorial-warehouse-aerial-1536.webp 1536w",
+    "width": 1536,
+    "height": 1024,
+    "alt": "AI-generated editorial reinterpretation of an aerial view of a partly dismantled warehouse and its surrounding work areas.",
+    "position": "54% 50%",
+    "sector": "DEMOLITION",
+    "title": "Make room for what comes next.",
+    "location": "AI-generated editorial image",
+    "outcome": "AI-generated editorial image. Structural removal and site transition. Explore the capabilities and documented experience behind the work.",
+    "href": "marketing/demolition-capabilities.html"
   },
   {
-    "src": "assets/capabilities/05-high-rise-recovery-1280.webp",
-    "srcset": "assets/capabilities/05-high-rise-recovery-640.webp 640w, assets/capabilities/05-high-rise-recovery-1280.webp 1280w, assets/capabilities/05-high-rise-recovery-1916.webp 1916w",
-    "width": 1916,
-    "height": 821,
-    "alt": "High-rise recovery operations.",
-    "sector": "COMPLEX RECOVERY",
-    "title": "Experience at the scale of your challenge.",
-    "position": "70% 47%",
-    "location": "Complex environments",
-    "outcome": "Explore the documented projects behind NorthStar’s experience.",
-    "href": "#library"
+    "src": "assets/capabilities/editorial/editorial-campus-roof-1280.webp",
+    "srcset": "assets/capabilities/editorial/editorial-campus-roof-640.webp 640w, assets/capabilities/editorial/editorial-campus-roof-1280.webp 1280w, assets/capabilities/editorial/editorial-campus-roof-1536.webp 1536w",
+    "width": 1536,
+    "height": 1024,
+    "alt": "AI-generated editorial reinterpretation of historic-campus roof work with unfinished underlayment and scaffolding.",
+    "position": "58% 46%",
+    "sector": "SPECIALTY SERVICES",
+    "title": "Complex properties. Focused expertise.",
+    "location": "AI-generated editorial image",
+    "outcome": "AI-generated editorial image. Retained assets and specialist work. Explore the capabilities and documented experience behind the work.",
+    "href": "marketing/specialty-services-overview.html"
   },
   {
-    "src": "assets/capabilities/01-equipment-mobilization-1280.webp",
-    "srcset": "assets/capabilities/01-equipment-mobilization-640.webp 640w, assets/capabilities/01-equipment-mobilization-1280.webp 1280w, assets/capabilities/01-equipment-mobilization-1912.webp 1912w",
-    "width": 1912,
-    "height": 823,
-    "alt": "NorthStar equipment prepared for transport.",
-    "sector": "RESOURCES & READINESS",
-    "title": "Prepared for the work ahead.",
-    "position": "68% 62%",
-    "location": "Ready to mobilize",
-    "outcome": "Explore the documented projects behind NorthStar’s experience.",
-    "href": "#library"
+    "src": "assets/capabilities/editorial/editorial-site-1280.webp",
+    "srcset": "assets/capabilities/editorial/editorial-site-640.webp 640w, assets/capabilities/editorial/editorial-site-1280.webp 1280w, assets/capabilities/editorial/editorial-site-1536.webp 1536w",
+    "width": 1536,
+    "height": 1024,
+    "alt": "AI-generated editorial reinterpretation of cleared industrial ground with retained infrastructure at the perimeter.",
+    "position": "50% 48%",
+    "sector": "ENVIRONMENTAL SERVICES",
+    "title": "Connect the work to the next use.",
+    "location": "AI-generated editorial image",
+    "outcome": "AI-generated editorial image. Site conditions and restoration. Explore the capabilities and documented experience behind the work.",
+    "href": "marketing/environmental-site-services.html"
   }
 ];

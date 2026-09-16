@@ -144,7 +144,7 @@ function suggestions(originalName, sourceTitle, searchText) {
 async function checkPdfObjects(bytes, context) {
   // PDF.js's JavaScript helpers do not include every annotation action. Inspect
   // parsed PDF objects too, including unreferenced objects retained in the download.
-  const { PDFDocument, PDFDict, PDFArray, PDFName, PDFStream } = await context.wait(import('../vendor/pdf-lib/pdf-lib.min.mjs?v=69fd725dd7d7'));
+  const { PDFDocument, PDFDict, PDFArray, PDFName, PDFStream } = await context.wait(import('../vendor/pdf-lib/pdf-lib.min.mjs?v=e450dfe07b91'));
   let parsed;
   try {
     parsed = await context.wait(PDFDocument.load(bytes, { updateMetadata: false, throwOnInvalidObject: true }));
@@ -206,7 +206,7 @@ async function readPageText(page, previous, context) {
 }
 
 async function preparePdf(bytes, context) {
-  const pdfjs = await context.wait(import('../vendor/pdfjs/pdf.min.mjs?v=69fd725dd7d7'));
+  const pdfjs = await context.wait(import('../vendor/pdfjs/pdf.min.mjs?v=e450dfe07b91'));
   context.check();
   pdfjs.GlobalWorkerOptions.workerSrc = vendorUrl('pdfjs/pdf.worker.min.mjs');
   const loading = pdfjs.getDocument({
@@ -302,7 +302,7 @@ async function prepareImage(bytes, kind, context) {
     // Re-encoding strips EXIF/location metadata and preserves a static image only.
     const jpg = await context.wait(canvasBlob(canvas, 'image/jpeg', 0.94));
     context.report(60, 'Creating a downloadable PDF');
-    const { PDFDocument } = await context.wait(import('../vendor/pdf-lib/pdf-lib.min.mjs?v=69fd725dd7d7'));
+    const { PDFDocument } = await context.wait(import('../vendor/pdf-lib/pdf-lib.min.mjs?v=e450dfe07b91'));
     const pdfDocument = await context.wait(PDFDocument.create());
     pdfDocument.setProducer('NorthStar Marketing Library');
     pdfDocument.setCreator('NorthStar Marketing Library');
