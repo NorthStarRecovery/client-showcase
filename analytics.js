@@ -6,6 +6,8 @@
   const base = typeof config.publicBasePath === 'string' ? config.publicBasePath : '';
   const campaignKey = 'northstar.analytics.campaign.v1';
   const audienceKey = 'northstar.analytics.audience.v1';
+  const choiceKey = 'northstar.analytics.choice.v1';
+  const choiceCookie = 'northstar_analytics_choice';
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const events = new Set(['page_view', 'case_view', 'industry_select', 'material_view', 'file_download',
     'contact_click', 'project_selection', 'collection_action', 'portfolio_open', 'portfolio_created',
@@ -37,18 +39,23 @@
   });
   const bundles = new Set(['northstar-industry-collection', 'northstar-marketing-collection']);
   const noOp = () => false;
-  window.NorthStarAnalytics = Object.freeze({ track: noOp, page: noOp, openSettings: noOp,
+  window.NorthStarAnalytics = Object.freeze({ track: noOp, page: noOp, openSettings: noOp, setChoice: noOp, getChoice: () => 'denied',
     setAudience: noOp, getAudience: () => 'unclassified' });
+
+  const scriptPath = document.currentScript?.src ? new URL(document.currentScript.src).pathname : '';
+  const settingsBase = scriptPath ? scriptPath.slice(0, scriptPath.lastIndexOf('/') + 1) : base;
+  const excluded = window.NORTHSTAR_MODE === 'internal'
+    || document.documentElement.hasAttribute('data-offline-portfolio')
+    || /\/(?:admin(?:\/|\.html$)|upload\.html$)/.test(location.pathname);
 
   function eligible() {
     return /^G-[A-Z0-9]{4,20}$/.test(measurementId) && /^\/[a-z0-9-]+\/$/.test(base)
       && location.protocol === 'https:' && !location.port
       && Array.isArray(config.allowedHosts) && config.allowedHosts.includes(location.hostname)
       && location.hostname !== 'localhost' && !/^127\./.test(location.hostname)
-      && location.pathname.startsWith(base) && window.NORTHSTAR_MODE !== 'internal'
-      && !document.documentElement.hasAttribute('data-offline-portfolio');
+      && location.pathname.startsWith(base) && !excluded;
   }
-  if (!eligible()) return;
+  if (excluded) return;
 
   let initialized = false;
   let failed = false;
@@ -61,6 +68,13 @@
   let focused = document.hasFocus();
   let lastActivity = performance.now();
   const disabledKey = `ga-disable-${measurementId}`;
+  let choice = readChoice();
+  let choiceDialog = null;
+  let choiceStatus = null;
+  let choiceOpener = null;
+  let choiceChannel = null;
+  let persistenceUnavailable = false;
+  window[disabledKey] = choice === 'denied';
   const campaignFields = [['campaign_source', 'utm_source', config.campaignSources],
     ['campaign_medium', 'utm_medium', config.campaignMediums], ['campaign_name', 'utm_campaign', config.campaignNames]];
   // Keep only approved entry labels, so SPA navigation does not erase the incoming campaign.
@@ -72,12 +86,139 @@
   function storageSet(kind, key, value) {
     try { window[kind].setItem(key, value); return true; } catch { return false; }
   }
+  function cookieChoice() {
+    try {
+      const item = document.cookie.split(';').map(value => value.trim()).find(value => value.startsWith(choiceCookie + '='));
+      const value = item?.slice(choiceCookie.length + 1);
+      return ['allowed', 'denied'].includes(value) ? value : null;
+    } catch { return null; }
+  }
+  function readChoice() {
+    const saved = storageGet('localStorage', choiceKey);
+    const cookie = cookieChoice();
+    // If one storage mechanism becomes read-only, a stale allowance must never override a new opt-out.
+    if (saved === 'denied' || cookie === 'denied') return 'denied';
+    return 'allowed';
+  }
+  function saveChoice(value) {
+    const saved = storageSet('localStorage', choiceKey, value) && storageGet('localStorage', choiceKey) === value;
+    let cookieSaved = false;
+    try {
+      document.cookie = `${choiceCookie}=${value}; Max-Age=${lifetime / 1000}; Path=${settingsBase || '/'}; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+      cookieSaved = cookieChoice() === value;
+    } catch { /* The in-memory choice still applies if storage and cookies are unavailable. */ }
+    return (saved || cookieSaved) && readChoice() === value;
+  }
+  function clearMeasurementCookies() {
+    // GA is configured with cookie_domain:none and cookie_path:base. Leave other sites' cookies alone.
+    const ownNames = new Set(['_ga', `_ga_${measurementId.replace(/^G-/, '')}`]);
+    try {
+      for (const name of ownNames) document.cookie = `${name}=; Max-Age=0; Path=${base || settingsBase || '/'}; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+    } catch { /* Disabling the measurement ID also prevents new measurement events. */ }
+  }
+  function getChoice() { return choice; }
+  function renderChoiceStatus() {
+    if (!choiceStatus) return;
+    const state = choice === 'denied' ? 'Analytics is off for this browser.' : 'Analytics is on for this browser.';
+    choiceStatus.textContent = state + (persistenceUnavailable
+      ? ' Your browser blocked saving this preference. It applies on this page; changing pages may reset it. Use your browser tracking controls for a lasting block.' : '');
+    choiceDialog.querySelectorAll('[data-analytics-choice]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.analyticsChoice === choice));
+    });
+  }
+  function applyChoice(value, persist) {
+    if (!['allowed', 'denied'].includes(value)) return false;
+    const previous = choice;
+    choice = value;
+    const saved = persist ? saveChoice(value) : readChoice() === value;
+    persistenceUnavailable = !saved;
+    window[disabledKey] = value === 'denied';
+    if (value === 'denied') {
+      engagement = null;
+      clearMeasurementCookies();
+      try { window.sessionStorage.removeItem(campaignKey); } catch { /* Optional campaign cache. */ }
+    } else if (previous === 'denied') {
+      if (initialized && !failed) { lastPage = ''; page(currentPage); }
+      else initialize();
+    }
+    renderChoiceStatus();
+    document.dispatchEvent(new CustomEvent('northstar:analytics-choice', { detail: { choice, persisted: saved } }));
+    if (persist) {
+      try { choiceChannel?.postMessage({ choice }); } catch { /* Storage and focus events remain available. */ }
+    }
+    // A fresh document removes Google's existing timers as well as our own event handlers.
+    // Never reload into automatic measurement when the browser cannot save the opt-out.
+    if (value === 'denied' && initialized && saved) location.reload();
+    return true;
+  }
+  function setChoice(value) { return applyChoice(value, true); }
+  function openSettings() {
+    if (!choiceDialog || choiceDialog.open) return false;
+    choiceOpener = document.activeElement;
+    renderChoiceStatus();
+    choiceDialog.showModal();
+    choiceDialog.querySelector('[data-close-analytics]').focus();
+    return true;
+  }
+  function mountSettings() {
+    choiceDialog = document.createElement('dialog');
+    choiceDialog.className = 'ns-analytics-dialog';
+    choiceDialog.setAttribute('aria-labelledby', 'ns-analytics-title');
+    choiceDialog.setAttribute('aria-describedby', 'ns-analytics-description');
+    choiceDialog.innerHTML = `<div class="ns-analytics-dialog-heading"><h2 id="ns-analytics-title">Cookie settings</h2><button type="button" data-close-analytics aria-label="Close cookie settings">Close</button></div>
+      <p id="ns-analytics-description">Google Analytics runs automatically to help us understand how this website is used. You can turn it off here. Your saved projects and website features will keep working.</p>
+      <p class="ns-analytics-status" role="status" aria-live="polite"></p>
+      <div class="ns-analytics-actions"><button type="button" data-analytics-choice="allowed">Allow analytics</button><button type="button" data-analytics-choice="denied">Turn off analytics</button></div>
+      <p class="ns-analytics-explanation">Turning analytics off refreshes this page to stop the Google script and removes this site's analytics cookies. This does not remove information already received by Google. If browser storage is blocked, your choice may last only for this page.</p>
+      <p class="ns-analytics-policy"><a href="${settingsBase}cookies.html">Read the Cookie Policy</a></p>`;
+    choiceStatus = choiceDialog.querySelector('.ns-analytics-status');
+    choiceDialog.querySelector('[data-close-analytics]').addEventListener('click', () => choiceDialog.close());
+    choiceDialog.querySelectorAll('[data-analytics-choice]').forEach(button => {
+      button.addEventListener('click', () => setChoice(button.dataset.analyticsChoice));
+    });
+    choiceDialog.addEventListener('close', () => {
+      if (choiceOpener instanceof HTMLElement && choiceOpener.isConnected) choiceOpener.focus({ preventScroll: true });
+    });
+    document.body.append(choiceDialog);
+    document.addEventListener('click', event => {
+      const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+      if (!target?.closest('[data-cookie-settings]') || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openSettings();
+    });
+    window.addEventListener('storage', event => {
+      let isLocal = !event.storageArea;
+      try { isLocal ||= event.storageArea === window.localStorage; } catch { /* Storage may be disabled after load. */ }
+      if ((event.key === choiceKey || event.key === null) && isLocal) {
+        const next = readChoice();
+        if (next !== choice) applyChoice(next, false);
+      }
+    });
+    // Cookies have no change event. Broadcast choices when available, then refresh on
+    // browser lifecycle events for suspended tabs and browsers without BroadcastChannel.
+    try {
+      choiceChannel = new BroadcastChannel(choiceKey);
+      choiceChannel.addEventListener('message', event => {
+        const next = event.data?.choice;
+        if (['allowed', 'denied'].includes(next) && next !== choice) applyChoice(next, false);
+      });
+    } catch { /* Some privacy modes disable cross-document messaging. */ }
+    const syncChoice = () => {
+      const next = readChoice();
+      if (next !== choice && (!persistenceUnavailable || next === 'denied')) applyChoice(next, false);
+    };
+    window.addEventListener('focus', syncChoice);
+    window.addEventListener('pageshow', syncChoice);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') syncChoice();
+    });
+  }
   function getAudience() { return audience; }
   function setAudience(value) {
     if (!['staff', 'unclassified'].includes(value)) return false;
     if (!storageSet('localStorage', audienceKey, value) || storageGet('localStorage', audienceKey) !== value) return false;
     audience = value;
-    if (initialized && !failed) gtag('set', { traffic_audience: audience });
+    if (initialized && !failed && choice !== 'denied') gtag('set', { traffic_audience: audience });
     return true;
   }
   function normalizeSlug(value) {
@@ -126,6 +267,8 @@
       return { page_type: 'marketing', industry };
     }
     if (path === 'privacy.html') return { page_type: 'privacy' };
+    if (path === 'cookies.html') return { page_type: 'cookies' };
+    if (path === 'terms.html') return { page_type: 'terms' };
     if (path === 'team-tools.html') return { page_type: 'team_tools' };
     if (path === 'marketing/material.html') return { page_type: 'material' };
     const material = path.match(/^marketing\/([a-z0-9-]+)\.html$/)?.[1];
@@ -143,7 +286,7 @@
   }
   function pageTitle() {
     const labels = { home: 'Project experience', marketing: 'Marketing materials', material: 'Marketing material',
-      privacy: 'Privacy and analytics', case: 'Case study', case_study: 'Case study', case_library: 'Project experience',
+      privacy: 'Privacy Policy', cookies: 'Cookie Policy', terms: 'Terms and Conditions', case: 'Case study', case_study: 'Case study', case_library: 'Project experience',
       project: 'Case study', showcase: 'Client showcase', team_tools: 'Team tools' };
     return `${labels[currentPage.page_type] || 'Client showcase'} | NorthStar`;
   }
@@ -268,9 +411,9 @@
       } else if (extension === 'zip' && bundles.has(id)) {
         track('file_download', { bundle_id: id, file_name: name, file_extension: extension, placement, method: 'link' });
       }
-    } else if (url.href === 'https://www.northstar.com/contact-us/' || url.href === 'tel:+18002832933'
+    } else if (url.href.toLowerCase() === 'mailto:adelacruz@northstar.com' || url.href === 'https://www.northstar.com/contact-us/' || url.href === 'tel:+18002832933'
       || url.href === 'tel:18002832933' || url.href === 'tel:1-800-283-2933') {
-      track('contact_click', { method: url.protocol === 'tel:' ? 'phone' : 'website', placement });
+      track('contact_click', { method: url.protocol === 'tel:' ? 'phone' : url.protocol === 'mailto:' ? 'email' : 'website', placement });
     }
   }
   function contentElement() {
@@ -347,26 +490,34 @@
     window.addEventListener('storage', event => {
       if (event.key !== audienceKey && event.key !== null) return;
       audience = storageGet('localStorage', audienceKey) === 'staff' ? 'staff' : 'unclassified';
-      if (initialized && !failed) gtag('set', { traffic_audience: audience });
+      if (initialized && !failed && choice !== 'denied') gtag('set', { traffic_audience: audience });
     });
   }
   function mount() {
+    mountSettings();
+    if (choice === 'denied') clearMeasurementCookies();
+    if (!document.querySelector('footer [data-cookie-settings], [data-site-footer]')) {
+      const utility = document.createElement('nav');
+      utility.className = 'ns-analytics-utility';
+      utility.setAttribute('aria-label', 'Privacy information');
+      const privacy = document.createElement('a');
+      privacy.href = settingsBase + 'privacy.html';
+      privacy.textContent = 'Privacy Policy';
+      const settings = document.createElement('a');
+      settings.href = settingsBase + 'cookies.html#choices';
+      settings.dataset.cookieSettings = '';
+      settings.textContent = 'Cookie Settings';
+      utility.append(privacy, settings);
+      document.body.append(utility);
+    }
     if (!eligible()) return;
-    const utility = document.createElement('nav');
-    utility.className = 'ns-analytics-utility';
-    utility.setAttribute('aria-label', 'Privacy information');
-    const privacy = document.createElement('a');
-    privacy.href = base + 'privacy.html';
-    privacy.textContent = 'Privacy';
-    utility.append(privacy);
-    document.body.append(utility);
     document.addEventListener('click', delegatedClick);
     document.addEventListener('auxclick', delegatedClick);
     currentPage = { ...inferredPage(), ...currentPage };
     initialize();
     observeEngagement();
   }
-  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings: noOp, setAudience, getAudience });
+  window.NorthStarAnalytics = Object.freeze({ track, page, openSettings, getChoice, setChoice, setAudience, getAudience });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
   else mount();
 })();

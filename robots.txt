@@ -1,3 +1,4 @@
+# Publish this file at the host root: /robots.txt
 User-agent: *
 Allow: /
 Sitemap: https://northstarrecovery.github.io/client-showcase/sitemap.xml

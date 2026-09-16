@@ -10,6 +10,35 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=f9576070ec66') : null;
+  let metadataRevision = 0;
+  function updatePageMetadata(project = null) {
+    document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';
+    if (!seoModule) return;
+    const revision = ++metadataRevision;
+    seoModule.then(({ projectPageSeo, collectionPageSeo, serializeSeoJson }) => {
+      // Navigation can change while the shared module is loading.
+      if (revision !== metadataRevision) return;
+      const seo = project ? projectPageSeo(window.NORTHSTAR_SEO, project) : collectionPageSeo(window.NORTHSTAR_SEO, studies);
+      document.title = seo.title;
+      const setMeta = (kind, name, value) => {
+        let node = document.head.querySelector(`meta[${kind}="${name}"]`);
+        if (!value) { node?.remove(); return; }
+        if (!node) { node = document.createElement('meta'); node.setAttribute(kind, name); document.head.append(node); }
+        node.content = value;
+      };
+      for (const [name, value] of Object.entries({ description:seo.description, robots:seo.robots, 'twitter:card':seo.image ? 'summary_large_image' : 'summary', 'twitter:title':seo.title, 'twitter:description':seo.description, 'twitter:image':seo.image, 'twitter:image:alt':seo.image ? seo.imageAlt : '' })) setMeta('name', name, value);
+      for (const [name, value] of Object.entries({ 'og:type':seo.type, 'og:title':seo.title, 'og:description':seo.description, 'og:url':seo.canonical, 'og:image':seo.image, 'og:image:alt':seo.image ? seo.imageAlt : '' })) setMeta('property', name, value);
+      let canonical = document.head.querySelector('link[rel="canonical"]');
+      if (seo.canonical) {
+        if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.append(canonical); }
+        canonical.href = seo.canonical;
+      } else canonical?.remove();
+      let schema = document.getElementById('northstar-seo-schema');
+      if (!schema) { schema = document.createElement('script'); schema.id = 'northstar-seo-schema'; schema.type = 'application/ld+json'; document.head.append(schema); }
+      schema.textContent = serializeSeoJson(seo.structured);
+    }).catch(error => console.warn('Page metadata could not be updated.', error));
+  }
   const photoSrc = project => asset(project.hero || project.images?.[0]?.src || project.visual?.src);
   const isConceptual = project => !asset(project.hero || project.images?.[0]?.src) && asset(project.visual?.src);
   const caption = (project,src) => project.imageCaptions?.[src] || (src === project.visual?.src ? project.visual.caption || 'Conceptual illustration. Not a project photograph.' : `${project.title} — project photograph`);
@@ -381,7 +410,7 @@
       ${related.length ? `<section id="related-projects" class="related-projects"><div class="section-heading"><div><span class="eyebrow mono">CONTINUE EXPLORING</span><h2>Related experience.</h2></div></div><div class="related-grid">${related.map((item,index) => `<div><p class="related-reason">${esc(item.reason)}</p>${renderCard(item.project,index)}</div>`).join('')}</div></section>` : ''}</div></article>`;
     if (!hasSubstantiveStory(project,sections)) $('project-page').querySelector('.full-story')?.remove();
     $('home-page').hidden = true; document.body.classList.add('project-route');
-    document.title = `${project.title} | NorthStar Project Experience`;
+    updatePageMetadata(project);
     reportCase(project);
     document.querySelector('.skip-link').href = projectUrl(id) + '#project-overview';
     document.dispatchEvent(new CustomEvent('northstar:render')); return true;
@@ -398,7 +427,7 @@
     if (push) { libraryQuery = filterQuery(); history.pushState({},'',withQuery(basePath,libraryQuery,hash)); }
     $('home-page').hidden = false; $('project-page').innerHTML = ''; document.body.classList.remove('project-route'); current = null;
     initializeHome(); render(); updateCovers();
-    document.title = 'Project Experience | NorthStar'; document.querySelector('.skip-link').href = '#library';
+    updatePageMetadata(); document.querySelector('.skip-link').href = '#library';
     analyticsCase = null;
     window.NorthStarAnalytics?.page({page_type:'case_library'});
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView(); else window.scrollTo({top:0,behavior:'instant'});
@@ -549,7 +578,7 @@
     if (match) { try { if (!renderProject(decodeURIComponent(match[1]))) { $('home-page').hidden = true; $('project-page').innerHTML = `<section class="project-not-found section-wrap"><h1>Project unavailable.</h1><p>This project is not part of this collection.</p><a class="button" href="${basePath}" data-home>Explore projects</a></section>`; } } catch { toast('This project link is not valid.'); } }
     else if (location.hash.startsWith('#case/')) { try { const id = decodeURIComponent(location.hash.slice(6)); if (byId.has(id)) { history.replaceState({project:id},'',withQuery(projectUrl(id),libraryQuery)); renderProject(id); } } catch { toast('This project link is not valid.'); } }
     else if (document.body.classList.contains('project-route')) navigateHome(location.hash,false);
-    else { initializeHome(); render(); }
+    else { initializeHome(); render(); updatePageMetadata(); }
     if (!current) previewSharedCollection();
   }
   window.addEventListener('popstate',readRoute);
