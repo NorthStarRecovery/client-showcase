@@ -1,0 +1,89 @@
+/* Shared motion only. Page composition lives in motion-design.css. */
+:root {
+  --motion-feedback: 120ms;
+  --motion-state: 200ms;
+  --motion-entry: 320ms;
+  --motion-reveal: 620ms;
+  --motion-ease: cubic-bezier(.16, 1, .3, 1);
+}
+.motion-ready.motion-enabled .motion-reveal {
+  transition: opacity var(--motion-reveal) var(--motion-ease), translate var(--motion-reveal) var(--motion-ease);
+}
+.motion-ready.motion-enabled .motion-reveal.motion-awaiting {
+  opacity: 0;
+  translate: 0 20px;
+  animation: none;
+}
+.motion-ready.motion-enabled .motion-reveal:focus-within {
+  opacity: 1;
+  translate: none;
+  transition: none;
+  animation: none!important;
+}
+.motion-ready.motion-enabled .project-opening-copy {
+  animation: motion-project-enter var(--motion-entry) var(--motion-ease) both;
+}
+.motion-ready.motion-enabled :is(.button, .mk-button, .ul-button, .icon-button, .card-select, .motion-toggle) {
+  transition-duration: var(--motion-feedback);
+}
+.motion-ready.motion-enabled :is(.button, .mk-button, .ul-button, .icon-button, .card-select):active {
+  translate: 0 1px;
+}
+.motion-ready.motion-enabled :is(.site-header, .mk-header, .up-header, .tt-header) {
+  transition: box-shadow var(--motion-state) ease-out, border-color var(--motion-state) ease-out;
+}
+.motion-ready.motion-enabled dialog[open] {
+  animation: motion-dialog-enter var(--motion-entry) var(--motion-ease) both;
+}
+.motion-ready.motion-enabled dialog[open]::backdrop {
+  animation: motion-backdrop-enter var(--motion-state) ease-out both;
+}
+.motion-ready.motion-enabled :is(.mk-focus-art, .mk-card-media, .ul-card-cover) {
+  overflow: hidden;
+}
+.motion-ready.motion-enabled :is(.mk-focus-art>img, .ul-card-cover>img) {
+  transition: scale var(--motion-reveal) var(--motion-ease);
+}
+@media(hover:hover) and (pointer:fine) {
+  .motion-ready.motion-enabled :is(.mk-focus-art, .ul-card-cover):hover>img { scale: 1.025; }
+}
+@keyframes motion-project-enter {
+  from { opacity: 0; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes motion-dialog-enter {
+  from { opacity: 0; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes motion-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* The preference also covers legacy marketing entrances and hover transitions. */
+html:has(body.motion-disabled) { scroll-behavior: auto!important; }
+.motion-disabled *, .motion-disabled *::before, .motion-disabled *::after {
+  animation: none!important;
+  transition: none!important;
+  scroll-behavior: auto!important;
+}
+.motion-disabled :is(.motion-reveal, .reveal, .mk-enter-ready, .project-enter) {
+  opacity: 1!important;
+  translate: none!important;
+}
+.motion-disabled :is(.motion-story-art, .motion-story-art>img, .mk-architecture>img) { transform: none!important; }
+.motion-disabled :is(.mk-focus-art>img, .ul-card-cover>img) { scale: none!important; }
+@media(prefers-reduced-motion:reduce) {
+  html { scroll-behavior: auto!important; }
+  .motion-ready *, .motion-ready *::before, .motion-ready *::after {
+    animation: none!important;
+    transition: none!important;
+    scroll-behavior: auto!important;
+  }
+  :is(.motion-reveal, .reveal, .mk-enter-ready, .project-enter) { opacity: 1!important; translate: none!important; }
+  :is(.motion-story-art, .motion-story-art>img, .mk-architecture>img) { transform: none!important; }
+  :is(.mk-focus-art>img, .ul-card-cover>img) { scale: none!important; }
+}
+@media print {
+  .motion-ready *, .motion-ready *::before, .motion-ready *::after { animation: none!important; transition: none!important; }
+  :is(.motion-reveal, .reveal, .mk-enter-ready, .project-enter) { opacity: 1!important; translate: none!important; }
+}

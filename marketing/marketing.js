@@ -13,6 +13,22 @@
   const focusStatus = document.querySelector('#mk-focus-status');
   const focusSelect = document.querySelector('#mk-focus-select');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const sceneAnimations = new Set();
+  function motionPaused() {
+    if (motion.matches || window.NorthStarMotion?.isPaused()) return true;
+    try { return localStorage.getItem('northstar-motion-paused') === 'true'; }
+    catch { return false; }
+  }
+  function cancelSceneAnimations() {
+    sceneAnimations.forEach(animation => animation.cancel());
+    sceneAnimations.clear();
+  }
+  document.addEventListener('northstar:motion-change', () => {
+    if (motionPaused()) cancelSceneAnimations();
+  });
+  motion.addEventListener('change', () => {
+    if (motionPaused()) cancelSceneAnimations();
+  });
   let currentScene = scenes.find(scene => !scene.hidden);
   function showIndustry(category) {
     const scene = scenes.find(item => item.dataset.industry === category) || scenes[0];
@@ -22,9 +38,11 @@
     currentScene = scene;
     focusSelect.value = scene.dataset.industry;
     focusStatus.textContent = displayCategory(scene.dataset.industry) + ' in focus';
-    if (changed && !motion.matches && typeof scene.animate === 'function') {
-      scene.getAnimations().forEach(animation => animation.cancel());
-      scene.animate([{ opacity: .4, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    if (changed) cancelSceneAnimations();
+    if (changed && !motionPaused() && typeof scene.animate === 'function') {
+      const animation = scene.animate([{ opacity: .4, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
+      sceneAnimations.add(animation);
+      animation.addEventListener('finish', () => sceneAnimations.delete(animation), { once: true });
     }
   }
   const normalize = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
@@ -105,7 +123,7 @@
     const industry = scenes.some(scene => scene.dataset.industry === link.dataset.jumpCategory);
     filter('push', industry ? 'industry-focus' : 'materials');
     window.NorthStarAnalytics?.track('industry_select',{industry:link.dataset.jumpCategory,placement:'industry_navigation'});
-    document.querySelector(industry ? '#industry-focus' : '#materials').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    document.querySelector(industry ? '#industry-focus' : '#materials').scrollIntoView({ behavior: motionPaused() ? 'instant' : 'smooth', block: 'start' });
     (industry ? currentScene.querySelector('h2') : search).focus({ preventScroll: true });
   }));
   document.querySelector('.mk-focus-navigation a').addEventListener('click', event => {
@@ -115,7 +133,7 @@
     formatSelect.value = '';
     search.value = '';
     filter('push', 'materials');
-    document.querySelector('#materials').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    document.querySelector('#materials').scrollIntoView({ behavior: motionPaused() ? 'instant' : 'smooth', block: 'start' });
     search.focus({ preventScroll: true });
   });
   // The document base serves static releases; in-page links retain their selected industry.
@@ -128,7 +146,7 @@
     const url = new URL(location.href);
     url.hash = hash;
     history.pushState(null, '', url);
-    target.scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    target.scrollIntoView({ behavior: motionPaused() ? 'instant' : 'smooth', block: 'start' });
     const heading = hash === '#industry-focus' ? currentScene.querySelector('h2') : target.querySelector('h2');
     if (heading) {
       heading.tabIndex = -1;
@@ -146,22 +164,4 @@
   document.querySelector('#mk-focus-switch').hidden = false;
   restoreQuery();
   filter(false);
-  if (!motion.matches && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) {
-        entry.target.classList.add('mk-in-view');
-        observer.unobserve(entry.target);
-      }
-    }, { threshold: .08 });
-    for (const element of document.querySelectorAll('.mk-card, .mk-section-intro, .mk-next')) {
-      element.classList.add('mk-enter-ready');
-      observer.observe(element);
-    }
-    motion.addEventListener('change', event => {
-      if (event.matches) {
-        observer.disconnect();
-        document.querySelectorAll('.mk-enter-ready').forEach(element => element.classList.add('mk-in-view'));
-      }
-    });
-  }
 })();

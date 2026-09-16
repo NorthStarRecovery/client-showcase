@@ -14,6 +14,8 @@ Architectural and project illustrations help explain scale, planning and recover
 
 The opening carousel presents three general capability scenes with descriptive captions. Project galleries include source photographs and credited openly licensed imagery. Responsive WebP previews and WOFF2 fonts reduce transfer size.
 
+The site includes large photographic openings, scroll-led architectural chapters, coordinated entrances and gallery feedback. Motion controls persist across projects and resources, and device reduced-motion preferences take priority. Printed publications remain static.
+
 NorthStar branding, project content and imagery remain the property of their respective owners.
 
 The Sibley facility photograph by DanielPenfield is used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), resized for display; the image retains that license. [Original photograph](https://commons.wikimedia.org/wiki/File:SibleyBuildingAndTowerFromParcel5.jpg). Hangar One gallery photographs are credited to NASA Ames Research Center and linked to NASA's original records in the case study.
