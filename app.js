@@ -10,7 +10,7 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
-  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=c25a1ef1ac23') : null;
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=94bf8339d0ee') : null;
   let metadataRevision = 0;
   function updatePageMetadata(project = null) {
     document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';
@@ -295,17 +295,17 @@
     $('hero-sector').textContent = project.sector.toUpperCase(); $('hero-title').textContent = project.title; $('hero-location').textContent = project.location;
     if (heroScenes.length) {
       delete $('hero-case').dataset.projectLink;
-      const destination = typeof project.href === 'string' && /^marketing\/[a-z0-9]+(?:-[a-z0-9]+)*\.html$/.test(project.href) ? project.href : '#library';
-      $('hero-case').toggleAttribute('data-home', destination === '#library');
+      const destination = typeof project.href === 'string' && (/^marketing\/[a-z0-9]+(?:-[a-z0-9]+)*\.html$/.test(project.href) || project.href === '#field-films') ? project.href : '#library';
+      $('hero-case').toggleAttribute('data-home', destination.startsWith('#'));
       $('hero-case').href = basePath + destination;
     }
     else { $('hero-case').dataset.projectLink = project.id; $('hero-case').removeAttribute('data-home'); $('hero-case').href = projectUrl(project.id); }
     $('hero-outcome').textContent = project.outcome || project.summary;
     $('feature-index').textContent = String(feature+1).padStart(2,'0'); $('feature-total').textContent = String(items.length).padStart(2,'0');
-    if (!$('feature-dots').children.length) $('feature-dots').innerHTML = items.map((item,index) => `<button data-feature="${index}" aria-label="Show image ${index + 1} of ${items.length}: ${esc(item.title)}" aria-pressed="${index === feature}"><span class="hero-segment-fill" aria-hidden="true"></span></button>`).join('');
+    if (!$('feature-dots').children.length) $('feature-dots').innerHTML = items.map((item,index) => `<button data-feature="${index}" aria-label="Show ${item.video ? 'video' : 'image'} ${index + 1} of ${items.length}: ${esc(item.title)}" aria-pressed="${index === feature}"><span class="hero-segment-fill" aria-hidden="true"></span></button>`).join('');
     $('feature-dots').querySelectorAll('button').forEach((button,index) => button.setAttribute('aria-pressed',index === feature));
     };
-    if (heroPlayer) heroPlayer.present(update, { animate, index: feature }); else update();
+    if (heroPlayer) heroPlayer.present(update, { animate, index: feature, videoSrc: heroScenes.length ? project.video : '' }); else update();
   }
   function showDialog(dialog, focusId) {
     if (!dialog.open) dialog.showModal();

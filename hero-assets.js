@@ -15,6 +15,20 @@ window.NORTHSTAR_HERO_ASSETS = [
     "href": "marketing/demolition-capabilities.html"
   },
   {
+    "src": "assets/field-media/video/taft-hero-loop.webp",
+    "video": "assets/field-media/video/taft-hero-loop.mp4",
+    "width": 1280,
+    "height": 720,
+    "alt": "Aerial view of industrial dismantling activity at the Oxy Taft plant.",
+    "position": "50% 50%",
+    "mobilePosition": "24% 50%",
+    "sector": "INDUSTRIAL DISMANTLING",
+    "title": "Precision in motion.",
+    "location": "Oxy Taft plant",
+    "outcome": "A closer look at plant-scale work, captured on site. Watch the field films.",
+    "href": "#field-films"
+  },
+  {
     "src": "assets/capabilities/editorial/editorial-campus-roof-1280.webp",
     "srcset": "assets/capabilities/editorial/editorial-campus-roof-640.webp 640w, assets/capabilities/editorial/editorial-campus-roof-1280.webp 1280w, assets/capabilities/editorial/editorial-campus-roof-1536.webp 1536w",
     "width": 1536,

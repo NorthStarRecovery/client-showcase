@@ -2,6 +2,8 @@
 .hero .hero-media{overflow:hidden;animation:none!important;clip-path:none!important}
 .hero .hero-image{z-index:1;object-position:var(--hero-position,54% 50%);transform-origin:var(--hero-position,54% 50%);will-change:transform,opacity}
 .hero .hero-image-previous{z-index:0;will-change:opacity}
+.hero .hero-video{position:absolute;inset:0;width:100%;height:100%;z-index:1;object-fit:cover;object-position:var(--hero-position,center);pointer-events:none}
+.hero .hero-video[hidden]{display:none}
 .hero .hero-scrim{z-index:3;pointer-events:none}
 .hero-transition-sweep{position:absolute;top:-10%;bottom:-10%;left:0;width:19%;z-index:2;background:#104c8e;border-right:2px solid #f4f6f8;opacity:0;pointer-events:none;will-change:transform,opacity}
 .hero-transition-bearing{position:absolute;z-index:4;top:43%;right:13%;display:flex;align-items:center;gap:14px;color:#fff;opacity:0;pointer-events:none}
@@ -18,6 +20,7 @@
 @media(max-width:800px){.hero-transition-bearing{right:8%}.hero-transition-bearing:before,.hero-transition-bearing:after{width:38px}}
 @media(max-width:520px){
   .hero .hero-image{object-position:var(--hero-mobile-position,var(--hero-position,center))!important;transform-origin:var(--hero-mobile-position,var(--hero-position,center))}
+  .hero .hero-video{object-position:var(--hero-mobile-position,var(--hero-position,center))}
   .hero .feature-dots{bottom:auto;min-height:44px}
   .hero-transition-bearing{top:35%;right:9%}
   .hero-transition-bearing img{width:34px;height:34px}
@@ -29,4 +32,4 @@
   .hero .hero-image{transform:none!important;opacity:1!important;will-change:auto}
   .hero-transition-sweep,.hero-transition-bearing{display:none}
 }
-@media print{.hero-transition-sweep,.hero-transition-bearing{display:none}}
+@media print{.hero-transition-sweep,.hero-transition-bearing,.hero-video{display:none}}

@@ -8,8 +8,46 @@
     let timer = null, remaining = duration, started = 0, visible = false;
     let focused = false, loading = false, initialized = false, printing = false;
     let animations = [], camera = null, progress = null, previous = null;
+    const video = document.createElement('video');
+    video.className = 'hero-video'; video.hidden = true; video.preload = 'none';
+    video.muted = true; video.defaultMuted = true; video.loop = true; video.playsInline = true;
+    video.setAttribute('aria-hidden', 'true'); video.tabIndex = -1;
+    media.insertBefore(video, image.nextSibling);
+    let videoSource = '', videoFailed = false, videoPending = false, videoRevision = 0;
     const disabled = () => reduced.matches || printing || Boolean(window.NorthStarMotion?.isPaused());
     const canPlay = () => initialized && !disabled() && !document.hidden && visible && !focused && !loading && !hero.closest('[hidden]') && !document.querySelector('dialog[open]');
+    function pauseVideo() {
+      videoRevision++; videoPending = false; video.pause();
+      hero.dataset.heroVideoPlayback = videoSource ? 'paused' : 'inactive';
+    }
+    function syncVideo(playing) {
+      if (!playing || !videoSource || videoFailed) {
+        pauseVideo();
+        if (!videoSource || disabled() || videoFailed) video.hidden = true;
+        if (videoFailed) hero.dataset.heroVideoPlayback = 'poster';
+        return;
+      }
+      // Attach the MP4 only when this scene may play; reduced-motion visits use the image alone.
+      if (video.getAttribute('src') !== videoSource) video.src = videoSource;
+      if (videoPending || !video.paused) return;
+      const revision = ++videoRevision;
+      videoPending = true; hero.dataset.heroVideoPlayback = 'loading';
+      Promise.resolve(video.play()).then(() => {
+        if (revision !== videoRevision) return;
+        videoPending = false;
+        if (!canPlay() || !videoSource) { pauseVideo(); return; }
+        video.hidden = false; hero.dataset.heroVideoPlayback = 'playing';
+      }).catch(() => {
+        if (revision !== videoRevision) return;
+        videoPending = false; videoFailed = true; video.hidden = true;
+        video.pause(); hero.dataset.heroVideoPlayback = 'poster';
+      });
+    }
+    video.addEventListener('error', () => {
+      if (!videoSource) return;
+      videoFailed = true; video.hidden = true; pauseVideo();
+      hero.dataset.heroVideoPlayback = 'poster';
+    });
     const stopTimer = () => {
       if (timer === null) return;
       clearTimeout(timer); timer = null;
@@ -22,6 +60,7 @@
         animations.forEach(animation => animation.cancel()); animations = []; camera = null;
         previous?.remove(); previous = null;
       }
+      syncVideo(playing);
       if (playing && !camera && typeof image.animate === 'function') {
         camera = image.animate([{ transform: 'none' }, { transform: 'scale(1.035)' }], { duration: remaining + 1000, fill: 'both', easing: 'linear' });
         animations.push(camera);
@@ -44,8 +83,9 @@
         progress = segment.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration, fill: 'both' });
       }
     }
-    function present(update, { animate = false, index = 0 } = {}) {
+    function present(update, { animate = false, index = 0, videoSrc = '' } = {}) {
       stopTimer();
+      pauseVideo();
       const outgoingTransform = getComputedStyle(image).transform;
       animations.forEach(animation => animation.cancel()); animations = [];
       previous?.remove(); previous = null;
@@ -58,6 +98,14 @@
         media.insertBefore(previous, image);
       }
       update();
+      videoSource = typeof videoSrc === 'string' && /^assets\/field-media\/video\/[a-z0-9-]+\.mp4$/.test(videoSrc) ? videoSrc : '';
+      videoFailed = false; video.hidden = true;
+      if (videoSource) {
+        video.poster = image.src;
+        video.style.setProperty('--hero-position', image.style.getPropertyValue('--hero-position'));
+        video.style.setProperty('--hero-mobile-position', image.style.getPropertyValue('--hero-mobile-position'));
+        if (video.readyState > 0) video.currentTime = 0;
+      }
       initialized = true; loading = false;
       hero.dataset.heroScene = String(index + 1);
       if (!disabled() && typeof image.animate === 'function') {
