@@ -67,7 +67,12 @@
     if (!imageValues.length && study.visual && study.visual.src) imageValues.push(study.visual.src);
     const images = imageValues.map(resourceUrl).filter(Boolean);
     const captions = {};
-    imageValues.forEach(value => { const conceptual = study.visual && resourceUrl(study.visual.src) === resourceUrl(value) && study.visual.kind === 'conceptual'; const caption = text((study.imageCaptions || {})[value]) || (conceptual ? text(study.visual.caption) : ''); captions[resourceUrl(value)] = { caption, conceptual: !!conceptual }; });
+    imageValues.forEach(value => {
+      const conceptual = study.visual && resourceUrl(study.visual.src) === resourceUrl(value) && study.visual.kind === 'conceptual';
+      const caption = text((study.imageCaptions || {})[value]) || (conceptual ? text(study.visual.caption) : '');
+      const original = (study.images || []).find(image => image && image.src === value);
+      captions[resourceUrl(value)] = { caption, conceptual: !!conceptual, license: text(original?.license), licenseUrl: externalUrl(original?.licenseUrl), sourceUrl: original?.license ? externalUrl(original.sourceUrl) : '' };
+    });
     const overview = text(study.overview || study.narrative || study.description);
     const key = overview.replace(/\s+/g, ' ');
     const sections = (Array.isArray(study.sections) ? study.sections : []).map(section => ({ heading: text(section.heading || section.title), text: text(section.text || section.body) })).filter(section => section.text && section.text.replace(/\s+/g, ' ') !== key);
@@ -140,7 +145,7 @@
     const meta = [study.location, study.period || study.year, study.event].filter(Boolean).map(value => '<span>' + escape(value) + '</span>').join('');
     const lead = study.outcome || (!executive && useSummary ? study.summary : '');
     const explanation = storyVisual ? '<div class="study-visual"><p class="eyebrow">Project explained</p><h3 class="visual-title">' + escape(storyVisual.title) + '</h3><figure class="explanation-scene"><img src="' + escape(storyVisual.src) + '" alt="' + (storyVisual.conceptual ? 'Illustration: ' : '') + escape(storyVisual.description || storyVisual.title) + '"><figcaption>' + escape(displayCaption(storyVisual.caption) || storyVisual.title) + '</figcaption></figure>' + (storyVisual.description ? '<p class="visual-description">' + escape(storyVisual.description) + '</p>' : '') + '</div>' : '';
-    const imageMarkup = image => '<img src="' + escape(image.src) + '" alt="' + escape(image.caption || (image.conceptual ? 'Illustration: ' : '') + study.title) + '">' + (displayCaption(image.caption) ? '<figcaption>' + escape(displayCaption(image.caption)) + '</figcaption>' : '');
+    const imageMarkup = image => '<img src="' + escape(image.src) + '" alt="' + escape(image.caption || (image.conceptual ? 'Illustration: ' : '') + study.title) + '">' + (displayCaption(image.caption) ? '<figcaption>' + escape(displayCaption(image.caption)) + (image.sourceUrl ? ' <a href="' + escape(image.sourceUrl) + '">Photo source</a>.' : '') + (image.licenseUrl ? ' <a href="' + escape(image.licenseUrl) + '">' + escape(image.license || 'Reuse terms') + '</a>.' : '') + '</figcaption>' : '');
     return '<template class="study-template" data-id="' + study.id + '" data-title="' + escape(study.title) + '" data-sector="' + escape(study.sector) + '" data-restricted="' + study.restricted + '"><div class="opening-chrome">' + header(logo, study.sector || 'Project experience', study.restricted) + '<div class="project-heading"><h2 class="project-title' + (study.title.length > 65 ? ' long-title' : '') + '">' + escape(study.title) + '</h2><p class="project-meta">' + meta + '</p></div>' + (images[0] ? '<figure class="project-scene' + (images[0].conceptual ? ' conceptual-scene' : '') + '">' + imageMarkup(images[0]) + '</figure>' : '') + metrics + (lead ? '<p class="standfirst' + (lead.length > 290 ? ' long-summary' : '') + '">' + escape(lead) + '</p>' : '') + '</div><div class="narrative-blocks">' + body + '</div><div class="study-gallery">' + images.map(image => '<figure>' + imageMarkup(image) + '</figure>').join('') + '</div><div class="study-services">' + (study.services ? '<p class="service-line"><strong>Services</strong> / ' + escape(study.services) + '</p>' : '') + '</div>' + explanation + '</template>';
   }
   function runtime() {
@@ -272,7 +277,7 @@
     window.NorthStarPortfolioReady = (async () => { await document.fonts.ready; await waitImages(); fitTitle(document.querySelector('.cover h1'), 240, 40); if (document.body.dataset.paginated !== 'true') composeProjects(); await waitImages(); checkLayout(); bindControls(); document.body.dataset.ready = 'true'; window.NorthStarPortfolio = Object.freeze({ html: () => serialized(false), pdfHtml: () => serialized(true) }); return { pages: document.querySelectorAll('.page').length }; })().catch(error => { status.textContent = error.message; document.body.dataset.failed = 'true'; document.querySelectorAll('.toolbar-actions button').forEach(button => { button.disabled = true; }); throw error; });
   }
   async function stylesheet() {
-    const response = await fetch(new URL('export.css?v=282175e8d23f', base)); if (!response.ok) throw new Error('The portfolio design could not be loaded.');
+    const response = await fetch(new URL('export.css?v=2565f3e47308', base)); if (!response.ok) throw new Error('The portfolio design could not be loaded.');
     const css = await response.text(); const urls = Array.from(new Set(Array.from(css.matchAll(/url\(["']?([^"')]+)["']?\)/g), match => match[1]))); const fonts = new Map(await Promise.all(urls.map(async url => [url, await embed(url)])));
     return css.replace(/url\(["']?([^"')]+)["']?\)/g, (_, url) => 'url("' + fonts.get(url) + '")');
   }

@@ -346,6 +346,10 @@
     const [id,title] = guides[project.sector] || ['national-recovery-capabilities','NorthStar recovery capabilities'];
     return `<aside class="project-guide"><span class="eyebrow mono">PLAN YOUR NEXT STEP</span><h3>${esc(title)}</h3><p>Explore the capabilities and planning guidance relevant to your site.</p><a class="text-button" href="${basePath}marketing/${id}.html">Read the guide ${icon('arrow-up-right')}</a></aside>`;
   }
+  function photoAttribution(image) {
+    if (!image.license || !/^https:\/\//.test(image.sourceUrl || '') || !/^https:\/\//.test(image.licenseUrl || '')) return '';
+    return ` <span class="photo-credit-links"><a href="${esc(image.sourceUrl)}" target="_blank" rel="noopener noreferrer">Photo source</a> · <a href="${esc(image.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(image.license)}</a></span>`;
+  }
   function renderProject(id) {
     const project = byId.get(id); if (!project) return false;
     current = id;
@@ -353,7 +357,7 @@
     const sections = project.sections?.length ? project.sections : [{heading:'Project story',text:project.overview}];
     const narrative = sections.filter(section => section.text).map(section => `<section><h3>${esc(section.heading || 'Project story')}</h3>${section.text.split(/\n\s*\n/).filter(Boolean).map(paragraph => `<p>${esc(paragraph)}</p>`).join('')}</section>`).join('');
     const images = (project.images || []).filter(image => asset(image.src));
-    const gallery = images.map((image,index) => `<figure class="project-photo reveal"><button data-photo="${esc(image.src)}" data-caption="${esc(caption(project,image.src))}" aria-label="Enlarge photograph ${index+1}: ${esc(caption(project,image.src))}"><img ${imageAttributes(image.src)} alt="${esc(caption(project,image.src))}" loading="lazy">${icon('maximize-2')}</button><figcaption><span class="mono">${String(index+1).padStart(2,'0')}</span>${esc(displayCaption(caption(project,image.src)))}</figcaption></figure>`).join('');
+    const gallery = images.map((image,index) => `<figure class="project-photo reveal"><button data-photo="${esc(image.src)}" data-caption="${esc(caption(project,image.src))}" aria-label="Enlarge photograph ${index+1}: ${esc(caption(project,image.src))}"><img ${imageAttributes(image.src)} alt="${esc(caption(project,image.src))}" loading="lazy">${icon('maximize-2')}</button><figcaption><span class="mono">${String(index+1).padStart(2,'0')}</span><span class="photo-caption">${esc(displayCaption(caption(project,image.src)))}${photoAttribution(image)}</span></figcaption></figure>`).join('');
     const timeline = Array.isArray(project.timeline) ? project.timeline.filter(item => item.label && item.text) : [];
     const related = relatedProjects(project);
     const research = project.research || {};

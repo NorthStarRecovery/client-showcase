@@ -1,4 +1,4 @@
-import { createLibraryClient, PUBLIC_FIELDS, libraryConfig } from './library-client.js?v=282175e8d23f';
+import { createLibraryClient, PUBLIC_FIELDS, libraryConfig } from './library-client.js?v=2565f3e47308';
 
 export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const CATEGORIES = new Set(['Manufacturing', 'Industrial', 'Commercial real estate', 'Medical', 'Education', 'Technology', 'Hospitality', 'Recovery services', 'Premier Response']);

@@ -142,4 +142,5 @@
   .enquiry-brief{font-size:16px;min-height:210px}.collection-share-actions>.button{width:100%}
   .project-guide h3{font-size:23px}.project-guide a{font-size:14px}
 }
+.photo-caption{min-width:0}.photo-credit-links{display:block;margin-top:6px}.photo-credit-links a{text-decoration:underline;text-underline-offset:3px}
 @media(prefers-reduced-motion:reduce){.hero .hero-media{clip-path:none!important}.hero-image{transform:none!important}}
