@@ -12,11 +12,13 @@ The [Marketing Materials collection](https://northstarrecovery.github.io/client-
 
 Architectural and project illustrations help explain scale, planning and recovery. Original documents and private editorial materials are not included.
 
-Twelve distinct editorial reinterpretations appear across service flyers, the resource library and homepage. The opening carousel presents three service-led scenes with editorial disclosure. Original project galleries remain unchanged and include source photographs and credited openly licensed imagery. Responsive WebP previews and WOFF2 fonts reduce transfer size.
+Twelve distinct editorial reinterpretations appear across service flyers, the resource library and homepage. The opening carousel combines three service-led scenes with crew briefing, high-rise recovery and equipment mobilization for six images. Original project galleries remain unchanged and include source photographs and credited openly licensed imagery. Responsive WebP previews and WOFF2 fonts reduce transfer size.
 
 Designed PDF flyers use corporate contact details on the page. Their Author metadata credits Andres Delacruz and adelacruz@northstar.com. Visible flyer copy contains no em or en dashes.
 
 The site includes large photographic openings, scroll-led architectural chapters, coordinated entrances and gallery feedback. Motion controls persist across projects and resources, and device reduced-motion preferences take priority. Printed publications remain static.
+
+The hero advances every eight active seconds with slow camera movement, crossfades, a directional NorthStar-blue sweep and timed progress segments. Hover, keyboard focus, background tabs, offscreen content and open dialogs pause automatic playback. Manual arrows and image selectors remain available; Motion off and device reduced motion stop the animation.
 
 The shared footer provides [adelacruz@northstar.com](mailto:adelacruz@northstar.com) for questions and **1-800-283-2933** for 24-hour emergency response. It links to the Privacy Policy, Cookie Policy, Terms and Conditions and Cookie Settings. Analytics runs automatically until a visitor turns it off; settings remain accessible from the footer.
 

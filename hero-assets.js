@@ -1,4 +1,4 @@
-/* AI-generated editorial capability artwork; documentary case photographs remain separate. */
+/* Approved capability artwork, including AI-generated editorial scenes; documentary case photographs remain separate. */
 window.NORTHSTAR_HERO_ASSETS = [
   {
     "src": "assets/capabilities/editorial/editorial-warehouse-aerial-1280.webp",
@@ -7,6 +7,7 @@ window.NORTHSTAR_HERO_ASSETS = [
     "height": 1024,
     "alt": "AI-generated editorial reinterpretation of an aerial view of a partly dismantled warehouse and its surrounding work areas.",
     "position": "54% 50%",
+    "mobilePosition": "54% 50%",
     "sector": "DEMOLITION",
     "title": "Make room for what comes next.",
     "location": "Structural removal and site transition",
@@ -20,6 +21,7 @@ window.NORTHSTAR_HERO_ASSETS = [
     "height": 1024,
     "alt": "AI-generated editorial reinterpretation of historic-campus roof work with unfinished underlayment and scaffolding.",
     "position": "58% 46%",
+    "mobilePosition": "58% 46%",
     "sector": "SPECIALTY SERVICES",
     "title": "Complex properties. Focused expertise.",
     "location": "Retained assets and specialist work",
@@ -33,10 +35,53 @@ window.NORTHSTAR_HERO_ASSETS = [
     "height": 1024,
     "alt": "AI-generated editorial reinterpretation of cleared industrial ground with retained infrastructure at the perimeter.",
     "position": "50% 48%",
+    "mobilePosition": "50% 48%",
     "sector": "ENVIRONMENTAL SERVICES",
     "title": "Connect the work to the next use.",
     "location": "Site conditions and restoration",
     "outcome": "Editorial project view. Explore the capabilities and documented experience behind the work.",
     "href": "marketing/environmental-site-services.html"
+  },
+  {
+    "src": "assets/capabilities/07-crew-briefing-dawn-1280.webp",
+    "srcset": "assets/capabilities/07-crew-briefing-dawn-640.webp 640w, assets/capabilities/07-crew-briefing-dawn-1280.webp 1280w, assets/capabilities/07-crew-briefing-dawn-1912.webp 1912w",
+    "width": 1912,
+    "height": 823,
+    "alt": "NorthStar crew briefing at dawn.",
+    "position": "67% 69%",
+    "mobilePosition": "67% 69%",
+    "sector": "PEOPLE & COORDINATION",
+    "title": "The right team. A coordinated response.",
+    "location": "Planning the response",
+    "outcome": "Explore the documented projects behind NorthStar’s experience.",
+    "href": "#library"
+  },
+  {
+    "src": "assets/capabilities/05-high-rise-recovery-1280.webp",
+    "srcset": "assets/capabilities/05-high-rise-recovery-640.webp 640w, assets/capabilities/05-high-rise-recovery-1280.webp 1280w, assets/capabilities/05-high-rise-recovery-1916.webp 1916w",
+    "width": 1916,
+    "height": 821,
+    "alt": "High-rise recovery operations.",
+    "position": "70% 47%",
+    "mobilePosition": "68% 47%",
+    "sector": "COMPLEX RECOVERY",
+    "title": "Experience at the scale of your challenge.",
+    "location": "Complex environments",
+    "outcome": "Explore the documented projects behind NorthStar’s experience.",
+    "href": "#library"
+  },
+  {
+    "src": "assets/capabilities/01-equipment-mobilization-1280.webp",
+    "srcset": "assets/capabilities/01-equipment-mobilization-640.webp 640w, assets/capabilities/01-equipment-mobilization-1280.webp 1280w, assets/capabilities/01-equipment-mobilization-1912.webp 1912w",
+    "width": 1912,
+    "height": 823,
+    "alt": "NorthStar equipment prepared for transport.",
+    "position": "68% 62%",
+    "mobilePosition": "68% 62%",
+    "sector": "RESOURCES & READINESS",
+    "title": "Prepared for the work ahead.",
+    "location": "Ready to mobilize",
+    "outcome": "Explore the documented projects behind NorthStar’s experience.",
+    "href": "#library"
   }
 ];

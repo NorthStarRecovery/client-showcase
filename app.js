@@ -10,7 +10,7 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
-  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=766c5fd1d3f1') : null;
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=f4985b3a707b') : null;
   let metadataRevision = 0;
   function updatePageMetadata(project = null) {
     document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';
@@ -83,6 +83,7 @@
   const heroScenes = Array.isArray(window.NORTHSTAR_HERO_ASSETS) ? window.NORTHSTAR_HERO_ASSETS.filter(scene => asset(scene.src)) : [];
   for (const project of studies.filter(project => project.featured && asset(project.hero))) if (featured.length < 5 && !featured.includes(project)) featured.push(project);
   if (!featured.length && studies.length) featured.push(studies[0]);
+  const heroPlayer = window.NorthStarHeroMotion?.create({ hero: document.querySelector('.hero'), media: $('hero-media'), image: $('hero-image'), advance: () => { feature = (feature + 1) % (heroScenes.length || featured.length); renderFeature(true); } });
   const flagship = ['firestone','prologis-fedex-facility','ritz-carlton-naples'].map(id => byId.get(id) || studies.find(project => id === 'firestone' && /firestone/i.test(project.title))).filter(Boolean);
   for (const project of featured) if (flagship.length < 3 && !flagship.includes(project)) flagship.push(project);
   function reportDraftStatus() {
@@ -274,14 +275,23 @@
     const items = heroScenes.length ? heroScenes : featured;
     if (!items.length) return;
     const revision = ++featureRevision, project = items[feature];
+    heroPlayer?.begin();
     const src = asset(heroScenes.length ? project.src : project.hero || project.images?.[0]?.src);
     const responsive = heroScenes.length ? project : window.NORTHSTAR_RESPONSIVE_ASSETS?.[src];
     const srcset = typeof responsive?.srcset === 'string' ? responsive.srcset.split(',').map(value => value.trim()).filter(value => { const [url,width] = value.split(/\s+/); return asset(url) && /^\d+w$/.test(width); }).join(', ') : '';
-    if (animate && src) { const preload = new Image(); preload.srcset = srcset; preload.sizes = '100vw'; preload.src = src; try { await preload.decode(); } catch { /* The image element displays its native fallback if unavailable. */ } }
+    if (animate && src) {
+      const preload = new Image(); preload.srcset = srcset; preload.sizes = '100vw'; preload.src = src;
+      let timeout;
+      try { await Promise.race([preload.decode(), new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Image loading timed out.')), 8000); })]); }
+      catch { if (revision === featureRevision) heroPlayer?.recover(); return; }
+      finally { clearTimeout(timeout); }
+    }
     if (revision !== featureRevision) return;
+    const update = () => {
     $('hero-image').srcset = srcset; $('hero-image').sizes = '100vw';
     $('hero-image').src = src; $('hero-image').alt = heroScenes.length ? project.alt : project.title;
-    $('hero-image').style.objectPosition = heroScenes.length ? project.position || 'center' : 'center';
+    $('hero-image').style.setProperty('--hero-position', heroScenes.length ? project.position || 'center' : 'center');
+    $('hero-image').style.setProperty('--hero-mobile-position', heroScenes.length ? project.mobilePosition || project.position || 'center' : 'center');
     $('hero-sector').textContent = project.sector.toUpperCase(); $('hero-title').textContent = project.title; $('hero-location').textContent = project.location;
     if (heroScenes.length) {
       delete $('hero-case').dataset.projectLink;
@@ -292,9 +302,10 @@
     else { $('hero-case').dataset.projectLink = project.id; $('hero-case').removeAttribute('data-home'); $('hero-case').href = projectUrl(project.id); }
     $('hero-outcome').textContent = project.outcome || project.summary;
     $('feature-index').textContent = String(feature+1).padStart(2,'0'); $('feature-total').textContent = String(items.length).padStart(2,'0');
-    if (!$('feature-dots').children.length) $('feature-dots').innerHTML = items.map((item,index) => `<button data-feature="${index}" aria-label="Show ${esc(item.title)}" aria-pressed="${index === feature}"></button>`).join('');
+    if (!$('feature-dots').children.length) $('feature-dots').innerHTML = items.map((item,index) => `<button data-feature="${index}" aria-label="Show image ${index + 1} of ${items.length}: ${esc(item.title)}" aria-pressed="${index === feature}"><span class="hero-segment-fill" aria-hidden="true"></span></button>`).join('');
     $('feature-dots').querySelectorAll('button').forEach((button,index) => button.setAttribute('aria-pressed',index === feature));
-    if (animate) { $('hero-media').classList.remove('changing'); requestAnimationFrame(() => requestAnimationFrame(() => $('hero-media').classList.add('changing'))); }
+    };
+    if (heroPlayer) heroPlayer.present(update, { animate, index: feature }); else update();
   }
   function showDialog(dialog, focusId) {
     if (!dialog.open) dialog.showModal();

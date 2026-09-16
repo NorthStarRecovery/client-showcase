@@ -1,0 +1,32 @@
+/* Directional movement echoes the NorthStar symbol without moving reading text. */
+.hero .hero-media{overflow:hidden;animation:none!important;clip-path:none!important}
+.hero .hero-image{z-index:1;object-position:var(--hero-position,54% 50%);transform-origin:var(--hero-position,54% 50%);will-change:transform,opacity}
+.hero .hero-image-previous{z-index:0;will-change:opacity}
+.hero .hero-scrim{z-index:3;pointer-events:none}
+.hero-transition-sweep{position:absolute;top:-10%;bottom:-10%;left:0;width:19%;z-index:2;background:#104c8e;border-right:2px solid #f4f6f8;opacity:0;pointer-events:none;will-change:transform,opacity}
+.hero-transition-bearing{position:absolute;z-index:4;top:43%;right:13%;display:flex;align-items:center;gap:14px;color:#fff;opacity:0;pointer-events:none}
+.hero-transition-bearing:before,.hero-transition-bearing:after{content:'';height:1px;width:72px;background:currentColor}
+.hero-transition-bearing img{width:46px;height:46px;object-fit:contain}
+.hero .feature-dots{height:44px;bottom:1px;gap:10px}
+.hero .feature-dots button{padding:20px 0;min-height:44px;overflow:hidden}
+.hero .feature-dots button:after{height:2px;background:#ffffff45;top:21px}
+.hero .feature-dots button[aria-pressed=true]:after{background:#ffffff65}
+.hero-segment-fill{position:absolute;z-index:1;left:0;right:0;top:21px;height:2px;background:#fff;transform:scaleX(0);transform-origin:left}
+.hero .feature-dots button[aria-pressed=true] .hero-segment-fill{transform:scaleX(1)}
+.hero .feature-dots button:focus-visible{outline-offset:-3px}
+.hero-feature{min-height:92px}
+@media(max-width:800px){.hero-transition-bearing{right:8%}.hero-transition-bearing:before,.hero-transition-bearing:after{width:38px}}
+@media(max-width:520px){
+  .hero .hero-image{object-position:var(--hero-mobile-position,var(--hero-position,center))!important;transform-origin:var(--hero-mobile-position,var(--hero-position,center))}
+  .hero .feature-dots{bottom:auto;min-height:44px}
+  .hero-transition-bearing{top:35%;right:9%}
+  .hero-transition-bearing img{width:34px;height:34px}
+  .hero-feature{min-height:105px}
+}
+.motion-disabled .hero-image{transform:none!important;opacity:1!important;will-change:auto}
+.motion-disabled :is(.hero-transition-sweep,.hero-transition-bearing){display:none}
+@media(prefers-reduced-motion:reduce){
+  .hero .hero-image{transform:none!important;opacity:1!important;will-change:auto}
+  .hero-transition-sweep,.hero-transition-bearing{display:none}
+}
+@media print{.hero-transition-sweep,.hero-transition-bearing{display:none}}
