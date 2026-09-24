@@ -10,7 +10,7 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
-  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=0a3c43416eed') : null;
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=9563c1c80fff') : null;
   let metadataRevision = 0;
   function updatePageMetadata(project = null) {
     document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';

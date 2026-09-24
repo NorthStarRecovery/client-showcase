@@ -1,5 +1,5 @@
-import { createClient } from '../vendor/supabase/supabase.mjs?v=0a3c43416eed';
-import { libraryConfig } from '../library-config.js?v=0a3c43416eed';
+import { createClient } from '../vendor/supabase/supabase.mjs?v=9563c1c80fff';
+import { libraryConfig } from '../library-config.js?v=9563c1c80fff';
 
 export { libraryConfig };
 export const PUBLIC_FIELDS = 'id,title,category,description,keywords,search_text,pages,file_bytes,sha256,file_path,cover_path,status,created_at,updated_at,published_at';
