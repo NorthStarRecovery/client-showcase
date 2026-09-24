@@ -10,7 +10,7 @@
   const collectionLabel = internal ? 'Portfolio studio' : 'Saved projects';
   const basePath = new URL('.', document.baseURI).pathname;
   const projectUrl = id => basePath + 'projects/' + encodeURIComponent(id) + '/';
-  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=f8f7c70ed2c4') : null;
+  const seoModule = window.NORTHSTAR_SEO ? import('./site-seo.mjs?v=2f8f8d4b491b') : null;
   let metadataRevision = 0;
   function updatePageMetadata(project = null) {
     document.title = project ? `${project.title} | NorthStar Case Study` : 'NorthStar Case Studies | Recovery, Demolition & Remediation';
@@ -144,7 +144,7 @@
     }
     return total;
   }
-  const filterParams = {q:'search',location:'location-filter',event:'event-filter',service:'service-filter',sort:'sort'};
+  const filterParams = {q:'search',location:'location-filter',event:'event-filter',service:'service-filter',year:'year-filter',sort:'sort'};
   let libraryQuery = new URLSearchParams(location.search);
   let routeInitialized = false, homeReady = false;
   function filterQuery(includeContext = true) {
@@ -188,7 +188,7 @@
   function render(sync = false, measure = false) {
     const terms = [...new Set(tokens($('search').value))];
     const scores = new Map(studies.map(project => [project.id,searchScore(project,terms)]));
-    filtered = studies.filter(project => (!sector || project.sector === sector) && (!$('location-filter').value || project.location === $('location-filter').value) && (!$('event-filter').value || project.event === $('event-filter').value) && (!$('service-filter').value || (project.services || []).includes($('service-filter').value)) && scores.get(project.id) >= 0);
+    filtered = studies.filter(project => (!sector || project.sector === sector) && (!$('location-filter').value || project.location === $('location-filter').value) && (!$('event-filter').value || project.event === $('event-filter').value) && (!$('service-filter').value || (project.services || []).includes($('service-filter').value)) && (!$('year-filter').value || String(recentYear(project)) === $('year-filter').value) && scores.get(project.id) >= 0);
     const sort = $('sort').value;
     if (sort === 'az') filtered.sort((a,b) => a.title.localeCompare(b.title));
     if (sort === 'za') filtered.sort((a,b) => b.title.localeCompare(a.title));
@@ -197,7 +197,7 @@
     if (sort === 'featured') filtered.sort((a,b) => scores.get(b.id)-scores.get(a.id) || Number(b.featured) - Number(a.featured));
     $('project-grid').innerHTML = filtered.slice(0,limit).map(renderCard).join('');
     $('project-grid').classList.toggle('list-view', view === 'list');
-    $('result-count').innerHTML = `<strong>${filtered.length}</strong> ${filtered.length === 1 ? 'project' : 'projects'}${sector ? ` in ${esc(sector)}` : ' to explore'}`;
+    $('result-count').innerHTML = `<strong>${filtered.length}</strong> ${filtered.length === 1 ? 'project' : 'projects'}${sector ? ` in ${esc(sector)}` : ' to explore'}${$('year-filter').value ? $('year-filter').value === '0' ? ' · year not recorded' : ` · started in ${esc($('year-filter').value)}` : ''}`;
     $('showing-count').textContent = `SHOWING ${Math.min(limit,filtered.length)} OF ${filtered.length} PROJECTS`;
     $('load-more').hidden = limit >= filtered.length;
     $('empty-state').hidden = filtered.length !== 0;
@@ -208,6 +208,8 @@
     document.dispatchEvent(new CustomEvent('northstar:render'));
   }
   function populateFilters() {
+    const years = [...new Set(studies.map(recentYear))].sort((a,b) => b-a);
+    for (const year of years) $('year-filter').add(new Option(year ? String(year) : 'Year not recorded', String(year)));
     for (const [id, values] of [['location-filter',studies.map(project => project.location)], ['event-filter',studies.map(project => project.event)], ['service-filter',studies.flatMap(project => project.services)]]) {
       for (const value of [...new Set(values.filter(Boolean))].sort((a,b) => a.localeCompare(b))) $(id).add(new Option(value, value));
     }
@@ -224,7 +226,7 @@
     homeReady = true; renderEditorial(); renderFeature();
   }
   function resetFilters() {
-    $('search').value = ''; ['location-filter','event-filter','service-filter'].forEach(id => $(id).value = '');
+    $('search').value = ''; ['location-filter','event-filter','service-filter','year-filter'].forEach(id => $(id).value = '');
     sector = ''; limit = 12; $('sort').value = 'featured'; document.querySelectorAll('[data-sector]').forEach(button => button.setAttribute('aria-pressed', button.dataset.sector === '')); render(true,true);
   }
   function updateCovers() {
@@ -497,7 +499,7 @@
     if (button.dataset.closeDialog) { $(button.dataset.closeDialog)?.close(); return; }
     if (button.hasAttribute('data-copy-enquiry')) { copyText($('enquiry-brief').value,'Project brief copied.'); return; }
     if (button.dataset.problem) {
-      sector = ''; $('search').value = ''; ['location-filter','event-filter','service-filter'].forEach(id => $(id).value = '');
+      sector = ''; $('search').value = ''; ['location-filter','event-filter','service-filter','year-filter'].forEach(id => $(id).value = '');
       const problem = button.dataset.problem;
       if ([...$('service-filter').options].some(option => option.value === problem)) $('service-filter').value = problem;
       else $('search').value = problem === 'Business Continuity' ? 'temporary power' : problem;
@@ -510,7 +512,7 @@
     if (button.dataset.industry) {
       sector = button.dataset.industry; limit = 12;
       track('industry_select',{industry:sector,placement:'case_industry_navigation'});
-      $('search').value = ''; ['location-filter','event-filter','service-filter'].forEach(id => $(id).value = '');
+      $('search').value = ''; ['location-filter','event-filter','service-filter','year-filter'].forEach(id => $(id).value = '');
       document.querySelectorAll('[data-sector]').forEach(tab => tab.setAttribute('aria-pressed',tab.dataset.sector === sector));
       render(true,true); $('library').scrollIntoView(); $('library-heading').tabIndex = -1; $('library-heading').focus({preventScroll:true}); return;
     }
@@ -551,9 +553,9 @@
     if (project) track('story_expand', {project_id:project.id,industry:project.sector});
   }, true);
   $('search').addEventListener('input',() => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { limit = 12; render(true,true); },250); });
-  ['location-filter','event-filter','service-filter','sort'].forEach(id => $(id).addEventListener('change',() => { limit = 12; render(true,true); }));
+  ['location-filter','event-filter','service-filter','year-filter','sort'].forEach(id => $(id).addEventListener('change',() => { limit = 12; render(true,true); }));
   $('industry-quick-select')?.addEventListener('change',() => {
-    sector = $('industry-quick-select').value; $('search').value = ''; ['location-filter','event-filter','service-filter'].forEach(id => $(id).value = '');
+    sector = $('industry-quick-select').value; $('search').value = ''; ['location-filter','event-filter','service-filter','year-filter'].forEach(id => $(id).value = '');
     limit = 12; document.querySelectorAll('[data-sector]').forEach(tab => tab.setAttribute('aria-pressed',tab.dataset.sector === sector));
     render(true,true); $('library').scrollIntoView(); $('library-heading').tabIndex = -1; $('library-heading').focus({preventScroll:true});
   });

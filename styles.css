@@ -37,3 +37,17 @@ h1,h2,h3{font-variation-settings:'wdth' 112;font-variant-numeric:tabular-nums}.h
 @media(max-width:520px){.conceptual-opening .project-opening-copy{padding:45px 5% 35px}.conceptual-opening .project-opening-photo{padding:0 0 45px}.conceptual-opening .project-opening-photo>.visual-label{left:0;font-size:8px;max-width:100%;bottom:5px}.project-explainer{margin-top:45px;padding-top:30px}.project-explainer .section-heading h2{font-size:34px}.project-explainer figcaption{display:block;margin-top:16px}.project-explainer figcaption>p{margin-top:12px;font-size:13px}.explainer-description{font-size:16px}.project-explainer button>.icon{right:10px;bottom:10px;width:34px;height:34px}.conceptual-explanation p{font-size:14px}}
 @media(max-width:520px){.project-breadcrumb>.text-button{margin-left:auto}.project-breadcrumb>.mono{max-width:55%}.project-breadcrumb .project-motion{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;translate:none!important}.hero-media{clip-path:none!important}}
+/* Year filtering stays visible; mobile collection controls never cover page content. */
+.year-filter{display:flex;flex-direction:column;gap:6px;font-size:12px;min-width:145px;align-self:center}
+.year-filter select{width:100%;min-height:44px;padding:10px 32px 10px 12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:16px}
+@media(max-width:800px){
+  .search-row{flex-wrap:wrap;align-items:end}
+  .search-row .search-field{flex-basis:100%}
+  .search-row .year-filter{flex:1;min-width:0}
+  body:has(.selection-dock:not([hidden])){padding-bottom:0}
+  html:has(.selection-dock:not([hidden])){scroll-padding-bottom:24px}
+  .selection-dock,.selection-dock.arrived{position:static;transform:none;animation:none;inset:auto;width:100%;max-width:100%;margin:0;box-shadow:none;gap:10px;padding:14px max(12px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  .selection-dock>div{min-width:0;gap:8px}
+  .selection-dock .button{font-size:12px;padding:10px 12px;gap:8px}
+  .selection-dock>.icon-button{width:44px;min-width:44px;min-height:44px}
+}
